@@ -1,11 +1,47 @@
 # TableLite
-[github地址](https://github.com/wanggaowan/TableLite)
-
 Android 轻量版Table组件，提供Table和SurfaceTable两种组件，
 SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现局部
 单元格刷新，不需要每次全局刷新，这对于表格中需要绘制网络照片来说可以极大的
 提示性能和效率。
+[github地址](https://github.com/wanggaowan/TableLite)
 
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![](https://jitpack.io/v/wanggaowan/TableLite.svg)](https://jitpack.io/#wanggaowan/TableLite)
+
+#### 如何使用：
+1. 添加 JitPack repository 到你的build文件
+   ```groovy
+    allprojects {
+    	repositories {
+    		...
+    		maven { url 'https://www.jitpack.io' }
+    	}
+    }
+   ```
+
+2. 增加依赖
+   ```groovy
+   dependencies {
+   	implementation 'com.github.wanggaowan:TableLite:1.0'
+   }
+   ```
+
+3. 使用表格View
+   ```xml
+   <com.keqiang.table.Table
+           android:id="@+id/table"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_margin="10dp"
+           android:background="@android:color/white"/>
+           
+   <com.keqiang.table.SurfaceTable
+           android:id="@+id/tableSurface"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_margin="10dp"
+           android:background="@android:color/white"/>        
+   ```
 #### 下面对Table和SurfaceTable中主要的类进行说明：
 **1.TableConfig(表格全局数据配置)，可配置项如下：**
  - 全局行高，最大最小行高。
@@ -61,14 +97,25 @@ SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现�
   }
 ```
 
+#### Proguard
+无需添加任何混淆规则，可直接混淆
 
+#### *License*
 
+TableLite is released under the Apache 2.0 license.
 
+```
+Copyright 2017 Huangyanbin.
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at following link.
 
+     http://www.apache.org/licenses/LICENSE-2.0
 
-
-
-
-
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitat
+```
