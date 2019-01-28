@@ -2,8 +2,7 @@
 Android 轻量版Table组件，提供Table和SurfaceTable两种组件，
 SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现局部
 单元格刷新，不需要每次全局刷新，这对于表格中需要绘制网络照片来说可以极大的
-提示性能和效率。
-[github地址](https://github.com/wanggaowan/TableLite)
+提升性能和效率。 [github地址](https://github.com/wanggaowan/TableLite)
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![](https://jitpack.io/v/wanggaowan/TableLite.svg)](https://jitpack.io/#wanggaowan/TableLite)
@@ -105,7 +104,7 @@ SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现�
 TableLite is released under the Apache 2.0 license.
 
 ```
-Copyright 2017 Huangyanbin.
+Copyright 2019 wanggaowan.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
