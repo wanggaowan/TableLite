@@ -11,8 +11,9 @@ import android.graphics.Rect;
 import com.keqiang.table.R;
 import com.keqiang.table.TableConfig;
 import com.keqiang.table.TouchHelper;
-import com.keqiang.table.interfaces.IDraw;
+import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
+import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.Column;
 import com.keqiang.table.model.DragChangeSizeType;
 import com.keqiang.table.model.Row;
@@ -31,8 +32,8 @@ import androidx.annotation.NonNull;
  * <br/>create by 汪高皖 on 2019/1/19 15:00
  */
 @SuppressWarnings("WeakerAccess")
-public class TableRender {
-    protected ITable mTable;
+public class TableRender<T extends Cell> {
+    protected ITable<T> mTable;
     
     /**
      * 用于裁剪画布
@@ -79,7 +80,7 @@ public class TableRender {
      */
     private Bitmap mRowColumnDragBitmap;
     
-    public TableRender(@NonNull ITable table) {
+    public TableRender(@NonNull ITable<T> table) {
         mTable = table;
         mClipRect = new Rect();
         mActualSizeRect = new Rect();
@@ -93,9 +94,6 @@ public class TableRender {
      * @return {@code false}没有执行绘制操作，{@code true}以重新绘制
      */
     public boolean draw(Canvas canvas) {
-        ShowCell.recycleInstances(mShowCells);
-        mShowCells.clear();
-        
         TableData tableData = mTable.getTableData();
         Rect showRect = mTable.getShowRect();
         
@@ -105,6 +103,8 @@ public class TableRender {
             return false;
         }
         
+        ShowCell.recycleInstances(mShowCells);
+        mShowCells.clear();
         statisticsTableActualSize();
         
         int fixTopRowHeight = drawRowFixTop(canvas);
@@ -146,9 +146,9 @@ public class TableRender {
      * 统计表格实际的大小
      */
     protected void statisticsTableActualSize() {
-        TableData tableData = mTable.getTableData();
-        List<Row> rows = tableData.getRows();
-        List<Column> columns = tableData.getColumns();
+        TableData<T> tableData = mTable.getTableData();
+        List<Row<T>> rows = tableData.getRows();
+        List<Column<T>> columns = tableData.getColumns();
         
         int totalRowHeight = 0;
         int totalColumnWidth = 0;
@@ -174,17 +174,17 @@ public class TableRender {
         canvas.save();
         canvas.clipRect(mClipRect);
         
-        List<Row> rows = mTable.getTableData().getRows();
-        List<Column> columns = mTable.getTableData().getColumns();
+        List<Row<T>> rows = mTable.getTableData().getRows();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
         int top = -mTable.getTouchHelper().getScrollY();
-        IDraw iDraw = mTable.getIDraw();
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
         
         for(int i = 0; i < rows.size(); i++) {
             if(top >= showRect.height() - fixBottomRowHeight) {
                 break;
             }
             
-            Row row = rows.get(i);
+            Row<T> row = rows.get(i);
             
             if(top + row.getHeight() <= fixTopRowHeight) {
                 top += row.getHeight();
@@ -209,7 +209,9 @@ public class TableRender {
                 canvas.clipRect(mClipRect);
                 
                 mShowCells.add(ShowCell.getInstance(i, j, mClipRect, false, false));
-                iDraw.onCellDraw(mTable, canvas, row.getCells().get(j), mClipRect, i, j);
+                if(iCellDraw != null) {
+                    iCellDraw.onCellDraw(mTable, canvas, row.getCells().get(j), mClipRect, i, j);
+                }
                 drawMask(canvas, mClipRect, i, j);
                 
                 canvas.restore();
@@ -249,7 +251,7 @@ public class TableRender {
         }
         
         int showWidth = mTable.getShowRect().width();
-        List<Row> rows = mTable.getTableData().getRows();
+        List<Row<T>> rows = mTable.getTableData().getRows();
         
         int fixTopRowHeight = 0;
         // 离table顶部的距离
@@ -303,7 +305,7 @@ public class TableRender {
         mTempFix.addAll(tableConfig.getRowBottomFix());
         Collections.sort(mTempFix, mFixDescComparator);
         
-        List<Row> rows = mTable.getTableData().getRows();
+        List<Row<T>> rows = mTable.getTableData().getRows();
         int showWidth = mTable.getShowRect().width();
         
         int fixBottomRowHeight = 0;
@@ -383,9 +385,9 @@ public class TableRender {
             }
         }
         
-        IDraw iDraw = mTable.getIDraw();
-        List<Row> rows = mTable.getTableData().getRows();
-        List<Column> columns = mTable.getTableData().getColumns();
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
+        List<Row<T>> rows = mTable.getTableData().getRows();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
         
         int fixLeftColumnWidth = 0;
         // 离table左边的距离
@@ -413,7 +415,7 @@ public class TableRender {
             
             int top = -mTable.getTouchHelper().getScrollY();
             for(int j = 0; j < rows.size(); j++) {
-                Row row = rows.get(j);
+                Row<T> row = rows.get(j);
                 
                 if(top >= showHeight - fixBottomRowHeight) {
                     break;
@@ -429,7 +431,9 @@ public class TableRender {
                 canvas.clipRect(mClipRect);
                 
                 mShowCells.add(ShowCell.getInstance(j, tempColumnLeftFix, mClipRect, false, true));
-                iDraw.onCellDraw(mTable, canvas, row.getCells().get(tempColumnLeftFix), mClipRect, j, tempColumnLeftFix);
+                if(iCellDraw != null) {
+                    iCellDraw.onCellDraw(mTable, canvas, row.getCells().get(tempColumnLeftFix), mClipRect, j, tempColumnLeftFix);
+                }
                 drawMask(canvas, mClipRect, j, tempColumnLeftFix);
                 
                 canvas.restore();
@@ -462,9 +466,9 @@ public class TableRender {
         mTempFix.addAll(tableConfig.getColumnRightFix());
         Collections.sort(mTempFix, mFixDescComparator);
         
-        IDraw iDraw = mTable.getIDraw();
-        List<Row> rows = mTable.getTableData().getRows();
-        List<Column> columns = mTable.getTableData().getColumns();
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
+        List<Row<T>> rows = mTable.getTableData().getRows();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
         
         int fixRightColumnWidth = 0;
         // 离table右边的距离
@@ -494,7 +498,7 @@ public class TableRender {
             
             int top = -mTable.getTouchHelper().getScrollY();
             for(int j = 0; j < rows.size(); j++) {
-                Row row = rows.get(j);
+                Row<T> row = rows.get(j);
                 
                 if(top >= showHeight - fixBottomRowHeight) {
                     break;
@@ -510,7 +514,9 @@ public class TableRender {
                 canvas.clipRect(mClipRect);
                 
                 mShowCells.add(ShowCell.getInstance(j, tempColumnRightFix, mClipRect, false, true));
-                iDraw.onCellDraw(mTable, canvas, row.getCells().get(tempColumnRightFix), mClipRect, j, tempColumnRightFix);
+                if(iCellDraw != null) {
+                    iCellDraw.onCellDraw(mTable, canvas, row.getCells().get(tempColumnRightFix), mClipRect, j, tempColumnRightFix);
+                }
                 drawMask(canvas, mClipRect, j, tempColumnRightFix);
                 
                 canvas.restore();
@@ -553,8 +559,8 @@ public class TableRender {
             }
         }
         
-        IDraw iDraw = mTable.getIDraw();
-        List<Column> columns = mTable.getTableData().getColumns();
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
         
         int fixLeftColumnWidth = 0;
         // 离table左边的距离
@@ -573,7 +579,7 @@ public class TableRender {
             }
             
             preStart = tempColumnLeftFix;
-            Column column = columns.get(tempColumnLeftFix);
+            Column<T> column = columns.get(tempColumnLeftFix);
             int right = fixLeftColumnWidth + column.getWidth();
             
             mClipRect.set(fixLeftColumnWidth, top, right, bottom);
@@ -581,7 +587,9 @@ public class TableRender {
             canvas.clipRect(mClipRect);
             
             mShowCells.add(ShowCell.getInstance(fixRow, tempColumnLeftFix, mClipRect, true, true));
-            iDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, tempColumnLeftFix);
+            if(iCellDraw != null) {
+                iCellDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, tempColumnLeftFix);
+            }
             drawMask(canvas, mClipRect, fixRow, tempColumnLeftFix);
             
             canvas.restore();
@@ -613,8 +621,8 @@ public class TableRender {
         mTempFix.addAll(tableConfig.getColumnRightFix());
         Collections.sort(mTempFix, mFixDescComparator);
         
-        IDraw iDraw = mTable.getIDraw();
-        List<Column> columns = mTable.getTableData().getColumns();
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
         
         int fixRightColumnWidth = 0;
         // 离table右边的距离
@@ -634,7 +642,7 @@ public class TableRender {
             }
             
             preStart = tempColumnRightFix;
-            Column column = columns.get(tempColumnRightFix);
+            Column<T> column = columns.get(tempColumnRightFix);
             int right = showWidth - fixRightColumnWidth;
             int left = right - column.getWidth();
             
@@ -643,7 +651,9 @@ public class TableRender {
             canvas.clipRect(mClipRect);
             
             mShowCells.add(ShowCell.getInstance(fixRow, tempColumnRightFix, mClipRect, true, true));
-            iDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, tempColumnRightFix);
+            if(iCellDraw != null) {
+                iCellDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, tempColumnRightFix);
+            }
             drawMask(canvas, mClipRect, fixRow, tempColumnRightFix);
             
             canvas.restore();
@@ -669,8 +679,8 @@ public class TableRender {
         canvas.save();
         canvas.clipRect(mClipRect);
         
-        List<Column> columns = mTable.getTableData().getColumns();
-        IDraw iDraw = mTable.getIDraw();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
         
         int left = -mTable.getTouchHelper().getScrollX();
         for(int j = 0; j < columns.size(); j++) {
@@ -678,7 +688,7 @@ public class TableRender {
                 break;
             }
             
-            Column column = columns.get(j);
+            Column<T> column = columns.get(j);
             if(left + column.getWidth() <= fixLeftColumnWidth) {
                 left += column.getWidth();
                 continue;
@@ -689,7 +699,9 @@ public class TableRender {
             canvas.clipRect(mClipRect);
             
             mShowCells.add(ShowCell.getInstance(fixRow, j, mClipRect, true, false));
-            iDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, j);
+            if(iCellDraw != null) {
+                iCellDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, j);
+            }
             drawMask(canvas, mClipRect, fixRow, j);
             
             canvas.restore();

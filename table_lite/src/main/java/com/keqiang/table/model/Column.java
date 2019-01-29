@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Created by 汪高皖 on 2019/1/15 0015 08:29
  */
-public class Column {
+public class Column<T extends Cell> {
     /**
      * 列宽度
      */
@@ -20,7 +20,7 @@ public class Column {
      */
     private boolean dragChangeSize;
     
-    private List<Cell> cells;
+    private List<T> cells;
     
     public int getWidth() {
         return width;
@@ -41,11 +41,11 @@ public class Column {
         this.dragChangeSize = dragChangeSize;
     }
     
-    public List<Cell> getCells() {
+    public List<T> getCells() {
         return cells;
     }
     
-    public void setCells(List<Cell> cells) {
+    public void setCells(List<T> cells) {
         this.cells = cells;
     }
 }

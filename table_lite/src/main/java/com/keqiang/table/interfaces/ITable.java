@@ -5,26 +5,41 @@ import android.graphics.Rect;
 
 import com.keqiang.table.TableConfig;
 import com.keqiang.table.TouchHelper;
+import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.ShowCell;
 import com.keqiang.table.model.TableData;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
+
 /**
  * @author Created by 汪高皖 on 2019/1/18 0018 10:49
  */
-public interface ITable {
+public interface ITable<T extends Cell> {
     Context getContext();
     
     /**
-     * 设置表格数据
-     *
-     * @param totalRow    总行数
-     * @param totalColumn 总列数
-     * @param cellFactory 用于获取单元格数据
-     * @param iDraw       用于绘制单元格内容
+     * 设置单元格生产工厂
      */
-    void setTableData(final int totalRow, final int totalColumn, final CellFactory cellFactory, final IDraw iDraw);
+    void setCellFactory(CellFactory<T> cellFactory);
+    
+    /**
+     * @return {@link CellFactory}用于获取单元格数据
+     */
+    @Nullable
+    CellFactory<T> getCellFactory();
+    
+    /**
+     * 设置单元格绘制类
+     */
+    void setCellDraw(ICellDraw<T> iCellDraw);
+    
+    /**
+     * @return {@link ICellDraw}用于绘制表格背景以及单元格内容
+     */
+    @Nullable
+    ICellDraw<T> getICellDraw();
     
     /**
      * @return {@link TableConfig}，该类主要配置
@@ -34,22 +49,12 @@ public interface ITable {
     /**
      * @return {@link TableData}，处理表格单元数据的增删操作
      */
-    TableData getTableData();
+    TableData<T> getTableData();
     
     /**
      * @return {@link TouchHelper},处理点击，移动逻辑，配置点击监听等相关操作
      */
-    TouchHelper getTouchHelper();
-    
-    /**
-     * @return {@link CellFactory}用于获取单元格数据
-     */
-    CellFactory getCellFactory();
-    
-    /**
-     * @return {@link IDraw}用于绘制表格背景以及单元格内容
-     */
-    IDraw getIDraw();
+    TouchHelper<T> getTouchHelper();
     
     /**
      * @return 表格在屏幕显示大小，只读，修改该值并不会实际生效

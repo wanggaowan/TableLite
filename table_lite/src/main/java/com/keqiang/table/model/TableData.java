@@ -5,7 +5,7 @@ import android.graphics.Rect;
 
 import com.keqiang.table.TableConfig;
 import com.keqiang.table.interfaces.CellFactory;
-import com.keqiang.table.interfaces.IDraw;
+import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.util.AsyncExecutor;
 import com.keqiang.table.util.Utils;
@@ -18,16 +18,16 @@ import androidx.annotation.NonNull;
 
 /**
  * 表格数据。此数据只记录总行数，总列数，每行每列单元格数据。重新设置或增加数据时第一次通过{@link CellFactory}获取单元格数据，
- * 此时需要将绘制的数据通过{@link Cell#setData(Object)}绑定。最终绘制到界面的数据通过调用{@link IDraw#onCellDraw(ITable, Canvas, Cell, Rect, int, int)}实现
+ * 此时需要将绘制的数据通过{@link Cell#setData(Object)}绑定。最终绘制到界面的数据通过调用{@link ICellDraw#onCellDraw(ITable, Canvas, Cell, Rect, int, int)}实现
  *
  * @author Created by 汪高皖 on 2019/1/15 0015 08:55
  */
-public class TableData {
-    private ITable table;
-    private List<Row> rows;
-    private List<Column> columns;
+public class TableData<T extends Cell> {
+    private ITable<T> table;
+    private List<Row<T>> rows;
+    private List<Column<T>> columns;
     
-    public TableData(@NonNull ITable table) {
+    public TableData(@NonNull ITable<T> table) {
         this.table = table;
         rows = new ArrayList<>();
         columns = new ArrayList<>();
@@ -50,14 +50,14 @@ public class TableData {
     /**
      * @return 行数据
      */
-    public List<Row> getRows() {
+    public List<Row<T>> getRows() {
         return rows;
     }
     
     /**
      * @return 列数据
      */
-    public List<Column> getColumns() {
+    public List<Column<T>> getColumns() {
         return columns;
     }
     
@@ -69,6 +69,11 @@ public class TableData {
      */
     public void setNewData(final int totalRow, final int totalColumn) {
         if(totalRow <= 0 || totalColumn <= 0) {
+            return;
+        }
+        
+        CellFactory cellFactory = table.getCellFactory();
+        if(cellFactory == null) {
             return;
         }
         
@@ -99,10 +104,6 @@ public class TableData {
      * @param addRowCount 新增加的行数，数据会通过{@link CellFactory#get(int, int)}获取
      */
     public void addRowData(int addRowCount) {
-        if(addRowCount <= 0) {
-            return;
-        }
-        
         addRowData(addRowCount, getTotalRow());
     }
     
@@ -115,6 +116,11 @@ public class TableData {
      */
     public void addRowData(final int addRowCount, final int insertPosition) {
         if(addRowCount <= 0) {
+            return;
+        }
+        
+        CellFactory cellFactory = table.getCellFactory();
+        if(cellFactory == null) {
             return;
         }
         
@@ -159,10 +165,6 @@ public class TableData {
      * @param addColumnCount 新增加的列数，数据会通过{@link CellFactory#get(int, int)}获取
      */
     public void addColumnData(int addColumnCount) {
-        if(addColumnCount <= 0) {
-            return;
-        }
-        
         addColumnData(addColumnCount, getTotalColumn());
     }
     
@@ -175,6 +177,11 @@ public class TableData {
      */
     public void addColumnData(final int addColumnCount, final int insertPosition) {
         if(addColumnCount <= 0) {
+            return;
+        }
+        
+        CellFactory cellFactory = table.getCellFactory();
+        if(cellFactory == null) {
             return;
         }
         
@@ -223,13 +230,17 @@ public class TableData {
      * @param positions 行所在位置
      */
     public void deleteRow(int... positions) {
+        if(positions == null || positions.length == 0) {
+            return;
+        }
+        
         AsyncExecutor.getInstance().execute(() -> {
             List<Row> deleteRows = new ArrayList<>();
             for(int position : positions) {
                 if(position < 0 || position >= getTotalRow()) {
                     continue;
                 }
-                Row row = rows.get(position);
+                Row<T> row = rows.get(position);
                 deleteRows.add(row);
                 for(int j = 0; j < columns.size(); j++) {
                     Cell cell = row.getCells().get(j);
@@ -268,7 +279,7 @@ public class TableData {
         AsyncExecutor.getInstance().execute(() -> {
             List<Row> deleteRows = new ArrayList<>();
             for(int i = start; i < end; i++) {
-                Row row = rows.get(i);
+                Row<T> row = rows.get(i);
                 deleteRows.add(row);
                 for(int j = 0; j < columns.size(); j++) {
                     Cell cell = row.getCells().get(j);
@@ -298,6 +309,10 @@ public class TableData {
      * @param positions 列所在位置
      */
     public void deleteColumn(int... positions) {
+        if(positions == null || positions.length == 0) {
+            return;
+        }
+        
         AsyncExecutor.getInstance().execute(() -> {
             List<Column> deleteColumns = new ArrayList<>();
             int totalColumn = getTotalColumn();
@@ -305,7 +320,7 @@ public class TableData {
                 if(position < 0 || position >= totalColumn) {
                     continue;
                 }
-                Column column = columns.get(position);
+                Column<T> column = columns.get(position);
                 deleteColumns.add(column);
                 for(int j = 0; j < rows.size(); j++) {
                     Cell cell = column.getCells().get(j);
@@ -344,7 +359,7 @@ public class TableData {
         AsyncExecutor.getInstance().execute(() -> {
             List<Column> deleteColumns = new ArrayList<>();
             for(int i = start; i < end; i++) {
-                Column column = columns.get(i);
+                Column<T> column = columns.get(i);
                 deleteColumns.add(column);
                 for(int j = 0; j < rows.size(); j++) {
                     Cell cell = column.getCells().get(j);
@@ -423,25 +438,24 @@ public class TableData {
      * @param totalColumn    总列数
      */
     private void mapCellDataByRow(int insertPosition, int rowStart, int totalRow, int totalColumn) {
+        CellFactory<T> cellFactory = table.getCellFactory();
+        if(cellFactory == null) {
+            return;
+        }
+        
         for(int i = rowStart; i < totalRow; i++) {
-            Row row = new Row();
-            List<Cell> rowCells = new ArrayList<>();
+            Row<T> row = new Row<>();
+            List<T> rowCells = new ArrayList<>();
             row.setCells(rowCells);
             
             rows.add(insertPosition, row);
             
-            CellFactory cellFactory = table.getCellFactory();
             for(int j = 0; j < totalColumn; j++) {
-                Cell cell = cellFactory.get(insertPosition, j);
-                if(cell == null) {
-                    cell = new Cell();
-                }
-                
+                T cell = cellFactory.get(insertPosition, j);
                 rowCells.add(cell);
-                
                 if(j >= columns.size()) {
-                    Column column = new Column();
-                    List<Cell> columnCells = new ArrayList<>();
+                    Column<T> column = new Column<>();
+                    List<T> columnCells = new ArrayList<>();
                     column.setCells(columnCells);
                     columns.add(column);
                     
@@ -464,25 +478,24 @@ public class TableData {
      * @param totalColumn    总列数
      */
     private void mapCellDataByColumn(int insertPosition, int columnStart, int totalColumn, int totalRow) {
+        CellFactory<T> cellFactory = table.getCellFactory();
+        if(cellFactory == null) {
+            return;
+        }
+        
         for(int i = columnStart; i < totalColumn; i++) {
-            Column column = new Column();
-            List<Cell> columnCells = new ArrayList<>();
+            Column<T> column = new Column<>();
+            List<T> columnCells = new ArrayList<>();
             column.setCells(columnCells);
             
             columns.add(insertPosition, column);
             
-            CellFactory cellFactory = table.getCellFactory();
             for(int j = 0; j < totalRow; j++) {
-                Cell cell = cellFactory.get(j, insertPosition);
-                if(cell == null) {
-                    cell = new Cell();
-                }
-                
+                T cell = cellFactory.get(j, insertPosition);
                 columnCells.add(cell);
-                
                 if(j >= rows.size()) {
-                    Row row = new Row();
-                    List<Cell> rowCells = new ArrayList<>();
+                    Row<T> row = new Row<>();
+                    List<T> rowCells = new ArrayList<>();
                     row.setCells(rowCells);
                     rows.add(row);
                     

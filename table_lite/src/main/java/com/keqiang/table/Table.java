@@ -10,8 +10,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.keqiang.table.interfaces.CellFactory;
-import com.keqiang.table.interfaces.IDraw;
+import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
+import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.ShowCell;
 import com.keqiang.table.model.TableData;
 import com.keqiang.table.render.TableRender;
@@ -31,12 +32,12 @@ import androidx.annotation.RequiresApi;
  * <li>{@link TableData}用于指定表格行列数，增删行列，清除数据，记录单元格数据，用于绘制时提供每个单元格位置和大小</li>
  * <li>{@link TouchHelper}用于处理点击，移动，快速滑动逻辑以及设置相关参数</li>
  * <li>{@link CellFactory}用于提供单元格数据，指定固定宽高或自适应时测量宽高</li>
- * <li>{@link IDraw}用于绘制整个表格背景和单元格内容</li>
+ * <li>{@link ICellDraw}用于绘制整个表格背景和单元格内容</li>
  * </ul>
  *
  * @author Created by 汪高皖 on 2019/1/15 0015 08:29
  */
-public class Table extends View implements ITable {
+public class Table<T extends Cell> extends View implements ITable<T> {
     /**
      * 屏幕上可展示的区域
      */
@@ -50,7 +51,7 @@ public class Table extends View implements ITable {
     /**
      * 表格数据
      */
-    private TableData mTableData;
+    private TableData<T> mTableData;
     
     /**
      * 表格配置
@@ -60,22 +61,22 @@ public class Table extends View implements ITable {
     /**
      * 获取表格数据
      */
-    private CellFactory mCellFactory;
+    private CellFactory<T> mCellFactory;
     
     /**
      * 表格绘制
      */
-    private IDraw mIDraw;
+    private ICellDraw<T> mICellDraw;
     
     /**
      * 处理触摸逻辑
      */
-    private TouchHelper mTouchHelper;
+    private TouchHelper<T> mTouchHelper;
     
     /**
      * 确定单元格位置，固定行列逻辑
      */
-    private TableRender mTableRender;
+    private TableRender<T> mTableRender;
     
     public Table(Context context) {
         super(context);
@@ -100,16 +101,23 @@ public class Table extends View implements ITable {
     
     private void init() {
         mShowRect = new Rect();
-        mTableData = new TableData(this);
+        mTableData = new TableData<>(this);
         mTableConfig = new TableConfig();
-        mTouchHelper = new TouchHelper(this);
-        mTableRender = new TableRender(this);
+        mTouchHelper = new TouchHelper<>(this);
+        mTableRender = new TableRender<>(this);
     }
     
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mTableRender.draw(canvas);
+    }
+    
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        boolean dispose = mTouchHelper.dispatchTouchEvent(this, event);
+        boolean superDispose = super.dispatchTouchEvent(event);
+        return dispose || superDispose;
     }
     
     @SuppressLint("ClickableViewAccessibility")
@@ -125,6 +133,94 @@ public class Table extends View implements ITable {
         mTouchHelper.onScreenSizeChange();
     }
     
+    /*
+     滑动模型图解:https://blog.csdn.net/luoang/article/details/70912058
+     */
+    
+    /**
+     * 水平方向可滑动范围
+     */
+    @Override
+    public int computeHorizontalScrollRange() {
+        return getActualSizeRect().right;
+    }
+    
+    /**
+     * 垂直方向可滑动范围
+     */
+    @Override
+    public int computeVerticalScrollRange() {
+        return getActualSizeRect().height();
+    }
+    
+    /**
+     * 水平方向滑动偏移值
+     *
+     * @return 滑出View左边界的距离，>0的值
+     */
+    @Override
+    public int computeHorizontalScrollOffset() {
+        return Math.max(0, mTouchHelper.getScrollX());
+    }
+    
+    /**
+     * 垂直方向滑动偏移值
+     *
+     * @return 滑出View顶部边界的距离，>0的值
+     */
+    @Override
+    public int computeVerticalScrollOffset() {
+        return Math.max(0, mTouchHelper.getScrollY());
+    }
+    
+    /**
+     * 判断垂直方向是否可以滑动
+     *
+     * @param direction <0：手指滑动方向从上到下(显示内容逐渐移动到顶部)，>0：手指滑动方向从下到上(显示内容逐渐移动到底部)
+     */
+    @Override
+    public boolean canScrollVertically(int direction) {
+        if(direction < 0) {
+            // 向顶部滑动
+            return mTouchHelper.getScrollY() > 0;
+        } else {
+            // 向底部滑动
+            return getActualSizeRect().height() > mTouchHelper.getScrollY() + mShowRect.height();
+        }
+    }
+    
+    /**
+     * 判断水平方向是否可以滑动
+     *
+     * @param direction <0：手指滑动方向从左到右(显示内容逐渐移动到左边界)，>0：手指滑动方向从右到左(显示内容逐渐移动到右边界)
+     */
+    @Override
+    public boolean canScrollHorizontally(int direction) {
+        if(direction < 0) {
+            // 向顶部滑动
+            return mTouchHelper.getScrollX() > 0;
+        } else {
+            // 向底部滑动
+            return getActualSizeRect().width() > mTouchHelper.getScrollX() + mShowRect.width();
+        }
+    }
+    
+    /**
+     * 水平方向展示内容大小
+     */
+    @Override
+    public int computeHorizontalScrollExtent() {
+        return mShowRect.width();
+    }
+    
+    /**
+     * 垂直方向展示内容大小
+     */
+    @Override
+    public int computeVerticalScrollExtent() {
+        return mShowRect.height();
+    }
+    
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -132,14 +228,31 @@ public class Table extends View implements ITable {
     }
     
     @Override
-    public void setTableData(final int totalRow, final int totalColumn, final CellFactory cellFactory, final IDraw iDraw) {
-        if(cellFactory == null || iDraw == null) {
+    public void setCellFactory(CellFactory<T> cellFactory) {
+        if(cellFactory == null) {
             return;
         }
         
         mCellFactory = cellFactory;
-        mIDraw = iDraw;
-        mTableData.setNewData(totalRow, totalColumn);
+    }
+    
+    @Override
+    public CellFactory<T> getCellFactory() {
+        return mCellFactory;
+    }
+    
+    @Override
+    public void setCellDraw(ICellDraw<T> iCellDraw) {
+        if(iCellDraw == null) {
+            return;
+        }
+        
+        mICellDraw = iCellDraw;
+    }
+    
+    @Override
+    public ICellDraw<T> getICellDraw() {
+        return mICellDraw;
     }
     
     @Override
@@ -148,7 +261,7 @@ public class Table extends View implements ITable {
     }
     
     @Override
-    public TableData getTableData() {
+    public TableData<T> getTableData() {
         return mTableData;
     }
     
@@ -174,16 +287,6 @@ public class Table extends View implements ITable {
     @Override
     public TouchHelper getTouchHelper() {
         return mTouchHelper;
-    }
-    
-    @Override
-    public CellFactory getCellFactory() {
-        return mCellFactory;
-    }
-    
-    @Override
-    public IDraw getIDraw() {
-        return mIDraw;
     }
     
     @Override

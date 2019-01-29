@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.Column;
@@ -22,7 +23,7 @@ import androidx.annotation.NonNull;
  * 确定单元格位置，固定行列逻辑
  * <br/>create by 汪高皖 on 2019/1/19 17:13
  */
-public class SurfaceTableRender extends TableRender implements SurfaceHolder.Callback {
+public class SurfaceTableRender<T extends Cell> extends TableRender<T> implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     /**
      * 判断Surface是否准备好，当为{@code true}时才可绘制内容
@@ -34,7 +35,7 @@ public class SurfaceTableRender extends TableRender implements SurfaceHolder.Cal
      */
     private int mDrawCount;
     
-    public SurfaceTableRender(@NonNull ITable table, SurfaceHolder holder) {
+    public SurfaceTableRender(@NonNull ITable<T> table, SurfaceHolder holder) {
         super(table);
         mHolder = holder;
         if(mHolder != null) {
@@ -118,8 +119,8 @@ public class SurfaceTableRender extends TableRender implements SurfaceHolder.Cal
      * @param data        新数据
      */
     public void reDrawCell(int rowIndex, int columnIndex, Object data) {
-        List<Row> rows = mTable.getTableData().getRows();
-        List<Column> columns = mTable.getTableData().getColumns();
+        List<Row<T>> rows = mTable.getTableData().getRows();
+        List<Column<T>> columns = mTable.getTableData().getColumns();
         if(!mDrawEnable
             || rowIndex < 0
             || rowIndex >= rows.size()
@@ -128,8 +129,8 @@ public class SurfaceTableRender extends TableRender implements SurfaceHolder.Cal
             return;
         }
         
-        Row row = rows.get(rowIndex);
-        Cell cell = row.getCells().get(columnIndex);
+        Row<T> row = rows.get(rowIndex);
+        T cell = row.getCells().get(columnIndex);
         cell.setData(data);
         
         int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
@@ -193,7 +194,10 @@ public class SurfaceTableRender extends TableRender implements SurfaceHolder.Cal
         // 调用mHolder.lockCanvas(mClipRect)会更新mClipRect区间，让其保证在可见区域范围内
         // 这样就会改变单元格原本大小
         mClipRect.set(drawRect);
-        mTable.getIDraw().onCellDraw(mTable, canvas, cell, mClipRect, rowIndex, columnIndex);
+        ICellDraw<T> iCellDraw = mTable.getICellDraw();
+        if(iCellDraw != null) {
+            iCellDraw.onCellDraw(mTable, canvas, cell, mClipRect, rowIndex, columnIndex);
+        }
         mHolder.unlockCanvasAndPost(canvas);
     }
 }

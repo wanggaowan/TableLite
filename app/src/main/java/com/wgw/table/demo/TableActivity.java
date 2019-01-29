@@ -20,7 +20,7 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class TableActivity extends AppCompatActivity {
-    private Table mTable;
+    private Table<Cell> mTable;
     private Paint mTextPaint;
     private List<Row> mRowList;
     
@@ -69,12 +69,15 @@ public class TableActivity extends AppCompatActivity {
             }
         }
         
-        mTable.setTableData(30, 10, (row, column) -> new Cell(mRowList.get(row).mColumns.get(column).text) {
+        mTable.setCellDraw(new TestTextCellDraw());
+        mTable.setCellFactory((row, column) -> new Cell(mRowList.get(row).mColumns.get(column).text) {
             @Override
             public int measureWidth() {
-                return (int) (60 + mTextPaint.measureText((String) getData()));
+                return (int) (60 + mTextPaint.measureText(getData()));
             }
-        }, new TestTextCellDraw());
+        });
+        
+        mTable.getTableData().setNewData(30,10);
     }
     
     public void addRow(View view) {
@@ -126,7 +129,7 @@ public class TableActivity extends AppCompatActivity {
         mTable.getTableData().deleteRowRange(1, 3);
     }
     
-    public class TestTextCellDraw extends TextCellDraw {
+    public class TestTextCellDraw extends TextCellDraw<Cell> {
         DrawConfig mDrawConfig;
         
         public TestTextCellDraw() {

@@ -25,7 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SurfaceTableActivity extends AppCompatActivity {
-    private SurfaceTable mTable;
+    private SurfaceTable<Cell> mTable;
     
     private List<Row> mRowList;
     private AlertDialog mAlertDialog;
@@ -69,12 +69,11 @@ public class SurfaceTableActivity extends AppCompatActivity {
             }
         }
         
-        //        mTable.setTableData(mRowList.size(), mRowList.get(0).mColumns.size(), (row, column) ->
-        //            // 设置固定宽高
-        //            new AutoSizeCell(200, 100, mRowList.get(row).mColumns.get(column).text), new TestTextCellDraw());
-        
-        mTable.setTableData(mRowList.size(), mRowList.get(0).mColumns.size(), (row, column) ->
-            new AutoSizeCell(mRowList.get(row).mColumns.get(column).text), new TestTextCellDraw());
+        mTable.setCellDraw(new TestTextCellDraw());
+        // 设置固定宽高
+//        mTable.setCellFactory((row, column) -> new AutoSizeCell(200,100,mRowList.get(row).mColumns.get(column).text));
+        mTable.setCellFactory((row, column) -> new AutoSizeCell(mRowList.get(row).mColumns.get(column).text));
+        mTable.getTableData().setNewData(mRowList.size(), mRowList.get(0).mColumns.size());
     }
     
     public void addRow(View view) {
@@ -147,19 +146,15 @@ public class SurfaceTableActivity extends AppCompatActivity {
     
     public void testZero(View view) {
         mAlertDialog = new AlertDialog.Builder(this)
-            .setPositiveButton("取消", (dialog, which) -> {
-                mAlertDialog.dismiss();
-            })
-            .setNegativeButton("确定", (dialog, which) -> {
-                mAlertDialog.dismiss();
-            })
+            .setPositiveButton("取消", (dialog, which) -> mAlertDialog.dismiss())
+            .setNegativeButton("确定", (dialog, which) -> mAlertDialog.dismiss())
             .setCancelable(false)
             .setMessage("test")
             .create();
         mAlertDialog.show();
     }
     
-    public class TestTextCellDraw extends TextCellDraw {
+    public class TestTextCellDraw extends TextCellDraw<Cell> {
         DrawConfig mDrawConfig;
         
         public TestTextCellDraw() {
@@ -215,7 +210,7 @@ public class SurfaceTableActivity extends AppCompatActivity {
         @Override
         public int measureWidth() {
             // 当前单元格宽度和全局宽度都设置为TableConfig.INVALID_VALUE 自适应宽度,测量逻辑则根据IDraw中绘制逻辑选择不同的测量方案
-            String data = (String) getData();
+            String data = getData();
             String[] split = data.split("\n");
             float maxWidth = 0;
             for(String s : split) {
@@ -230,7 +225,7 @@ public class SurfaceTableActivity extends AppCompatActivity {
         @Override
         public int measureHeight() {
             // 当前单元格高度和全局高度都设置为TableConfig.INVALID_VALUE 自适应高度，测量逻辑则根据IDraw中绘制逻辑选择不同的测量方案
-            String text = (String) getData();
+            String text = getData();
             StaticLayout staticLayout = new StaticLayout(text, 0, text.length(),
                 textPaint, 200,
                 Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false);

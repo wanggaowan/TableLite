@@ -10,7 +10,7 @@ import com.keqiang.table.model.Cell;
  *
  * @author Created by 汪高皖 on 2019/1/15 0015 09:20
  */
-public interface IDraw {
+public interface ICellDraw<T extends Cell> {
     /**
      * 单元格绘制，多次调用,因此不建议在此方法中new 对象
      *
@@ -20,5 +20,5 @@ public interface IDraw {
      * @param row      单元格所在行,下标从0开始
      * @param column   单元格所在列,下标从0开始
      */
-    void onCellDraw(ITable table, Canvas canvas, Cell cell, Rect drawRect, int row, int column);
+    void onCellDraw(ITable<T> table, Canvas canvas, T cell, Rect drawRect, int row, int column);
 }

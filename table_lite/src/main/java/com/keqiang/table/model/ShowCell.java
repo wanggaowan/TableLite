@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import com.keqiang.table.TableConfig;
-import com.keqiang.table.interfaces.IDraw;
+import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
 
 import java.util.List;
@@ -108,7 +108,7 @@ public class ShowCell extends ObjectPool.Poolable {
      * 单元格绘制矩形，这是界面真实绘制的位置。
      * 此矩形大小可能比实际界面看到的大小要大，原因在于一些固定的行列遮挡了非固定行列的内容，
      * 但是非固定行列在绘制时还是需要按照实际大小进行绘制，否则内容就会显示错位，
-     * 遮挡会通过{@link Canvas#clipRect(Rect)}实现，用户在{@link IDraw#onCellDraw(ITable, Canvas, Cell, Rect, int, int)}
+     * 遮挡会通过{@link Canvas#clipRect(Rect)}实现，用户在{@link ICellDraw#onCellDraw(ITable, Canvas, Cell, Rect, int, int)}
      * 时无需关心，只需按照传入的Rect范围内容进行绘制逻辑即可
      */
     public Rect getDrawRect() {

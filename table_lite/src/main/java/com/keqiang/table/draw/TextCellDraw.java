@@ -11,18 +11,18 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.Gravity;
 
-import com.keqiang.table.interfaces.IDraw;
+import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.TableData;
 
 /**
- * 基础文本类表格绘制。可配置内容参考{@link DrawConfig}，此类主要是一个教程类的实现，说明{@link IDraw}接口各方法该如何处理绘制逻辑
+ * 基础文本类表格绘制。可配置内容参考{@link DrawConfig}，此类主要是一个教程类的实现，说明{@link ICellDraw}接口各方法该如何处理绘制逻辑
  *
  * @author Created by 汪高皖 on 2019/1/15 0015 09:31
  */
 @SuppressLint("RtlHardcoded")
-public abstract class TextCellDraw implements IDraw {
+public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     private static final TextPaint PAINT = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private static final Rect TEMP_RECT = new Rect();
     
@@ -35,7 +35,7 @@ public abstract class TextCellDraw implements IDraw {
     public abstract DrawConfig getConfig(int row, int column);
     
     @Override
-    public void onCellDraw(ITable table, Canvas canvas, Cell cell, Rect drawRect, int row, int column) {
+    public void onCellDraw(ITable<T> table, Canvas canvas, T cell, Rect drawRect, int row, int column) {
         if (drawRect.width() <= 0 || drawRect.height() <= 0) {
             return;
         }
@@ -160,7 +160,7 @@ public abstract class TextCellDraw implements IDraw {
                 break;
             
             case Gravity.CENTER_HORIZONTAL:
-                x = drawRect.left + (drawRect.width()) / 2;
+                x = drawRect.left + drawRect.width() / 2f;
                 PAINT.setTextAlign(Paint.Align.CENTER);
                 break;
             
