@@ -60,48 +60,48 @@ public class ShowCell extends ObjectPool.Poolable {
     /**
      * 单元格所在行
      */
-    private int mRow;
+    private int row;
     
     /**
      * 单元格所在列
      */
-    private int mColumn;
+    private int column;
     
     /**
      * 单元格绘制矩形
      */
-    private Rect mDrawRect;
+    private Rect drawRect;
     
     /**
      * 是否是行固定
      */
-    private boolean mFixRow;
+    private boolean fixRow;
     
     /**
      * 是否是列固定
      */
-    private boolean mFixColumn;
+    private boolean fixColumn;
     
     private ShowCell() {
-        mDrawRect = new Rect();
-        mRow = TableConfig.INVALID_VALUE;
-        mColumn = TableConfig.INVALID_VALUE;
+        drawRect = new Rect();
+        row = TableConfig.INVALID_VALUE;
+        column = TableConfig.INVALID_VALUE;
     }
     
     public int getRow() {
-        return mRow;
+        return row;
     }
     
     public void setRow(int row) {
-        this.mRow = row;
+        this.row = row;
     }
     
     public int getColumn() {
-        return mColumn;
+        return column;
     }
     
     public void setColumn(int column) {
-        this.mColumn = column;
+        this.column = column;
     }
     
     /**
@@ -112,27 +112,27 @@ public class ShowCell extends ObjectPool.Poolable {
      * 时无需关心，只需按照传入的Rect范围内容进行绘制逻辑即可
      */
     public Rect getDrawRect() {
-        return mDrawRect;
+        return drawRect;
     }
     
     public void setDrawRect(Rect drawRect) {
-        this.mDrawRect.set(drawRect);
+        this.drawRect.set(drawRect);
     }
     
     public boolean isFixRow() {
-        return mFixRow;
+        return fixRow;
     }
     
     public void setFixRow(boolean fixRow) {
-        mFixRow = fixRow;
+        this.fixRow = fixRow;
     }
     
     public boolean isFixColumn() {
-        return mFixColumn;
+        return fixColumn;
     }
     
     public void setFixColumn(boolean fixColumn) {
-        mFixColumn = fixColumn;
+        this.fixColumn = fixColumn;
     }
     
     @Override
@@ -142,10 +142,10 @@ public class ShowCell extends ObjectPool.Poolable {
     
     @Override
     protected void recycle() {
-        mDrawRect.setEmpty();
-        mFixRow = false;
-        mFixColumn = false;
-        mRow = TableConfig.INVALID_VALUE;
-        mColumn = TableConfig.INVALID_VALUE;
+        drawRect.setEmpty();
+        fixRow = false;
+        fixColumn = false;
+        row = TableConfig.INVALID_VALUE;
+        column = TableConfig.INVALID_VALUE;
     }
 }

@@ -13,24 +13,39 @@ public class Row {
     /**
      * 行高
      */
-    private int mHeight = TableConfig.INVALID_VALUE;
+    private int height = TableConfig.INVALID_VALUE;
     
+    /**
+     * 是否拖拽改变了列宽
+     */
+    private boolean dragChangeSize;
     
-    private List<Cell> mCells;
+    private List<Cell> cells;
     
     public int getHeight() {
-        return mHeight;
+        return height;
     }
     
     public void setHeight(int height) {
-        mHeight = height;
+        this.height = height;
+    }
+    
+    public boolean isDragChangeSize() {
+        return dragChangeSize;
+    }
+    
+    /**
+     * @param dragChangeSize {@code true}则列宽自适应取消，始终根据拖拽改变后的列宽显示
+     */
+    public void setDragChangeSize(boolean dragChangeSize) {
+        this.dragChangeSize = dragChangeSize;
     }
     
     public List<Cell> getCells() {
-        return mCells;
+        return cells;
     }
     
     public void setCells(List<Cell> cells) {
-        mCells = cells;
+        this.cells = cells;
     }
 }

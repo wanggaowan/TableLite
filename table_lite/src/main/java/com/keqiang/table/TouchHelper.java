@@ -536,6 +536,8 @@ public class TouchHelper {
                     width = tableConfig.getMaxColumnWidth();
                 }
                 
+                row.setDragChangeSize(true);
+                column.setDragChangeSize(true);
                 if(row.getHeight() != height || column.getWidth() != width) {
                     row.setHeight(height);
                     column.setWidth(width);
@@ -560,6 +562,7 @@ public class TouchHelper {
                     height = tableConfig.getMaxRowHeight();
                 }
                 
+                row.setDragChangeSize(true);
                 if(row.getHeight() != height) {
                     row.setHeight(height);
                     notifyViewChanged();
@@ -583,6 +586,7 @@ public class TouchHelper {
                     width = tableConfig.getMaxColumnWidth();
                 }
                 
+                column.setDragChangeSize(true);
                 if(column.getWidth() != width) {
                     column.setWidth(width);
                     notifyViewChanged();

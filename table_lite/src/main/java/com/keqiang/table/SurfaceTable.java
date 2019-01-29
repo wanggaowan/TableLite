@@ -119,7 +119,7 @@ public class SurfaceTable extends FrameLayout implements ITable {
         
         mSurfaceView = new SurfaceView(context);
         ViewGroup.LayoutParams layoutParams
-                = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mSurfaceView.setLayoutParams(layoutParams);
         mSurfaceView.setZOrderOnTop(true);
         mSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -171,7 +171,7 @@ public class SurfaceTable extends FrameLayout implements ITable {
             if(surfaceView == null) {
                 surfaceView = new SurfaceView(getContext());
                 ViewGroup.LayoutParams layoutParams
-                        = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 surfaceView.setLayoutParams(layoutParams);
                 surfaceView.setZOrderOnTop(true);
                 surfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -289,7 +289,8 @@ public class SurfaceTable extends FrameLayout implements ITable {
      * @param data   新数据
      */
     public void asyncReDrawCell(int row, int column, Object data) {
-        AsyncExecutor.getInstance().execute(() -> mTableRender.reDrawCell(row, column, data));
+        // surfaceView可以直接在非主线程中调用绘制
+        mTableRender.reDrawCell(row, column, data);
     }
     
     /**

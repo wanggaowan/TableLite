@@ -26,7 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SurfaceTableActivity extends AppCompatActivity {
     private SurfaceTable mTable;
-    private TextPaint mTextPaint;
+    
     private List<Row> mRowList;
     private AlertDialog mAlertDialog;
     
@@ -55,10 +55,6 @@ public class SurfaceTableActivity extends AppCompatActivity {
             Toast.makeText(SurfaceTableActivity.this, "row:" + row + ",column:" + column, Toast.LENGTH_SHORT).show();
         });
         
-        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextSize(30);
-        mTextPaint.setColor(Color.BLACK);
-        
         mRowList = new ArrayList<>();
         for(int i = 0; i < 50; i++) {
             Row row = new Row();
@@ -75,42 +71,16 @@ public class SurfaceTableActivity extends AppCompatActivity {
         
         //        mTable.setTableData(mRowList.size(), mRowList.get(0).mColumns.size(), (row, column) ->
         //            // 设置固定宽高
-        //            new Cell(200, 100, mRowList.get(row).mColumns.get(column).text), new TestTextCellDraw());
+        //            new AutoSizeCell(200, 100, mRowList.get(row).mColumns.get(column).text), new TestTextCellDraw());
         
         mTable.setTableData(mRowList.size(), mRowList.get(0).mColumns.size(), (row, column) ->
-                new Cell(mRowList.get(row).mColumns.get(column).text) {
-                    @Override
-                    public int measureWidth() {
-                        // 当前单元格宽度和全局宽度都设置为TableConfig.INVALID_VALUE 自适应宽度
-                        String data = (String) getData();
-                        String[] split = data.split("\n");
-                        float maxWidth = 0;
-                        for(String s : split) {
-                            float v = 60 + mTextPaint.measureText(s);
-                            if(v > maxWidth) {
-                                maxWidth = v;
-                            }
-                        }
-                        return (int) (maxWidth);
-                    }
-                    
-                    @Override
-                    public int measureHeight() {
-                        // 当前单元格高度和全局高度都设置为TableConfig.INVALID_VALUE 自适应高度
-                        
-                        String text = (String) getData();
-                        StaticLayout staticLayout = new StaticLayout(text, 0, text.length(),
-                                mTextPaint, 200,
-                                Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false);
-                        return staticLayout.getHeight() + 60;
-                    }
-                }, new TestTextCellDraw());
+            new AutoSizeCell(mRowList.get(row).mColumns.get(column).text), new TestTextCellDraw());
     }
     
     public void addRow(View view) {
         List<Row> rowList = new ArrayList<>();
         int columnSize = mRowList.get(0).mColumns.size();
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < 1; i++) {
             Row row = new Row();
             rowList.add(row);
             
@@ -125,35 +95,40 @@ public class SurfaceTableActivity extends AppCompatActivity {
         
         mRowList.addAll(1, rowList);
         
-        mTable.getTableData().addRowData(2, 1);
+        mTable.getTableData().addRowData(1, 1);
     }
     
     public void addColumn(View view) {
         for(int i = 0; i < mRowList.size(); i++) {
             Row row = mRowList.get(i);
             List<Column> columns = new ArrayList<>();
-            for(int j = 0; j < 2; j++) {
+            for(int j = 0; j < 1; j++) {
                 Column column = new Column();
                 column.text = "addColumn" + i + j;
                 columns.add(column);
             }
             row.mColumns.addAll(1, columns);
         }
-        mTable.getTableData().addColumnData(2, 1);
+        mTable.getTableData().addColumnData(1, 1);
     }
     
     public void deleteColumn(View view) {
+        if(mTable.getTableData().getTotalColumn() < 2) {
+            return;
+        }
+        
         for(Row row : mRowList) {
             row.mColumns.remove(1);
-            row.mColumns.remove(1);
         }
-        mTable.getTableData().deleteColumnRange(1, 3);
+        mTable.getTableData().deleteColumnRange(1, 2);
     }
     
     public void deleteRow(View view) {
+        if(mTable.getTableData().getTotalRow() < 2) {
+            return;
+        }
         mRowList.remove(1);
-        mRowList.remove(1);
-        mTable.getTableData().deleteRowRange(1, 3);
+        mTable.getTableData().deleteRowRange(1, 2);
     }
     
     public void areaupdate(View view) {
@@ -172,15 +147,15 @@ public class SurfaceTableActivity extends AppCompatActivity {
     
     public void testZero(View view) {
         mAlertDialog = new AlertDialog.Builder(this)
-                .setPositiveButton("取消", (dialog, which) -> {
-                    mAlertDialog.dismiss();
-                })
-                .setNegativeButton("确定", (dialog, which) -> {
-                    mAlertDialog.dismiss();
-                })
-                .setCancelable(false)
-                .setMessage("test")
-                .create();
+            .setPositiveButton("取消", (dialog, which) -> {
+                mAlertDialog.dismiss();
+            })
+            .setNegativeButton("确定", (dialog, which) -> {
+                mAlertDialog.dismiss();
+            })
+            .setCancelable(false)
+            .setMessage("test")
+            .create();
         mAlertDialog.show();
     }
     
@@ -215,5 +190,51 @@ public class SurfaceTableActivity extends AppCompatActivity {
     
     public static class Column {
         private String text;
+    }
+    
+    public static class AutoSizeCell extends Cell {
+        private static TextPaint textPaint;
+        
+        static {
+            textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            textPaint.setTextSize(30);
+        }
+        
+        public AutoSizeCell() {
+        
+        }
+        
+        public AutoSizeCell(Object data) {
+            super(data);
+        }
+        
+        public AutoSizeCell(int width, int height, Object data) {
+            super(width, height, data);
+        }
+        
+        @Override
+        public int measureWidth() {
+            // 当前单元格宽度和全局宽度都设置为TableConfig.INVALID_VALUE 自适应宽度,测量逻辑则根据IDraw中绘制逻辑选择不同的测量方案
+            String data = (String) getData();
+            String[] split = data.split("\n");
+            float maxWidth = 0;
+            for(String s : split) {
+                float v = 60 + textPaint.measureText(s);
+                if(v > maxWidth) {
+                    maxWidth = v;
+                }
+            }
+            return (int) (maxWidth);
+        }
+        
+        @Override
+        public int measureHeight() {
+            // 当前单元格高度和全局高度都设置为TableConfig.INVALID_VALUE 自适应高度，测量逻辑则根据IDraw中绘制逻辑选择不同的测量方案
+            String text = (String) getData();
+            StaticLayout staticLayout = new StaticLayout(text, 0, text.length(),
+                textPaint, 200,
+                Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false);
+            return staticLayout.getHeight() + 60;
+        }
     }
 }

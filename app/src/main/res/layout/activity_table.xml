@@ -19,28 +19,28 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:onClick="addRow"
-            android:text="增加一行"
+            android:text="增加两行"
             android:textSize="24px"/>
 
         <Button
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:onClick="addColumn"
-            android:text="增加一列"
+            android:text="增加两列"
             android:textSize="24px"/>
 
         <Button
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:onClick="deleteRow"
-            android:text="删除一行"
+            android:text="删除两行"
             android:textSize="24px"/>
 
         <Button
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:onClick="deleteColumn"
-            android:text="删除一列"
+            android:text="删除两列"
             android:textSize="24px"/>
     </LinearLayout>
 

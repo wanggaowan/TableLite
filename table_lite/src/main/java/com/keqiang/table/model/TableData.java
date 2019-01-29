@@ -23,42 +23,42 @@ import androidx.annotation.NonNull;
  * @author Created by 汪高皖 on 2019/1/15 0015 08:55
  */
 public class TableData {
-    private ITable mTable;
-    private List<Row> mRows;
-    private List<Column> mColumns;
+    private ITable table;
+    private List<Row> rows;
+    private List<Column> columns;
     
     public TableData(@NonNull ITable table) {
-        mTable = table;
-        mRows = new ArrayList<>();
-        mColumns = new ArrayList<>();
+        this.table = table;
+        rows = new ArrayList<>();
+        columns = new ArrayList<>();
     }
     
     /**
      * @return 总行数
      */
     public int getTotalRow() {
-        return mRows.size();
+        return rows.size();
     }
     
     /**
      * @return 总列数
      */
     public int getTotalColumn() {
-        return mColumns.size();
+        return columns.size();
     }
     
     /**
      * @return 行数据
      */
     public List<Row> getRows() {
-        return mRows;
+        return rows;
     }
     
     /**
      * @return 列数据
      */
     public List<Column> getColumns() {
-        return mColumns;
+        return columns;
     }
     
     /**
@@ -68,28 +68,28 @@ public class TableData {
      * @param totalColumn 表格列数
      */
     public void setNewData(final int totalRow, final int totalColumn) {
-        if (totalRow <= 0 || totalColumn <= 0) {
+        if(totalRow <= 0 || totalColumn <= 0) {
             return;
         }
         
-        mRows.clear();
-        mColumns.clear();
+        rows.clear();
+        columns.clear();
         AsyncExecutor.getInstance().execute(() -> {
             mapCellDataByRow(0, 0, totalRow, totalColumn);
             
-            for (int i = 0; i < totalRow; i++) {
-                Row row = mRows.get(i);
-                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
+            for(int i = 0; i < totalRow; i++) {
+                Row row = rows.get(i);
+                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
             
-            for (int i = 0; i < totalColumn; i++) {
-                Column column = mColumns.get(i);
-                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
+            for(int i = 0; i < totalColumn; i++) {
+                Column column = columns.get(i);
+                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
             
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -99,7 +99,7 @@ public class TableData {
      * @param addRowCount 新增加的行数，数据会通过{@link CellFactory#get(int, int)}获取
      */
     public void addRowData(int addRowCount) {
-        if (addRowCount <= 0) {
+        if(addRowCount <= 0) {
             return;
         }
         
@@ -114,42 +114,42 @@ public class TableData {
      *                       否则插入到指定位置
      */
     public void addRowData(final int addRowCount, final int insertPosition) {
-        if (addRowCount <= 0) {
+        if(addRowCount <= 0) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             int preTotalRow = getTotalRow();
             final int position;
-            if (insertPosition < 0) {
+            if(insertPosition < 0) {
                 position = 0;
-            } else if (insertPosition > getTotalRow()) {
+            } else if(insertPosition > getTotalRow()) {
                 position = getTotalRow();
             } else {
                 position = insertPosition;
             }
             mapCellDataByRow(position, preTotalRow, preTotalRow + addRowCount, getTotalColumn());
             
-            for (int i = position; i < position + addRowCount; i++) {
-                Row row = mRows.get(i);
-                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
+            for(int i = position; i < position + addRowCount; i++) {
+                Row row = rows.get(i);
+                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
             
-            for (int i = 0; i < mColumns.size(); i++) {
-                Column column = mColumns.get(i);
-                if (column.getWidth() != TableConfig.INVALID_VALUE) {
-                    int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, mTable.getTableConfig());
-                    if (actualColumnWidth > column.getWidth()) {
+            for(int i = 0; i < columns.size(); i++) {
+                Column column = columns.get(i);
+                if(column.getWidth() != TableConfig.INVALID_VALUE) {
+                    int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, table.getTableConfig());
+                    if(actualColumnWidth > column.getWidth()) {
                         column.setWidth(actualColumnWidth);
                     }
                 } else {
-                    int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, mTable.getTableConfig());
+                    int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, table.getTableConfig());
                     column.setWidth(actualColumnWidth);
                 }
             }
             
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -159,7 +159,7 @@ public class TableData {
      * @param addColumnCount 新增加的列数，数据会通过{@link CellFactory#get(int, int)}获取
      */
     public void addColumnData(int addColumnCount) {
-        if (addColumnCount <= 0) {
+        if(addColumnCount <= 0) {
             return;
         }
         
@@ -174,18 +174,18 @@ public class TableData {
      *                       否则插入到指定位置
      */
     public void addColumnData(final int addColumnCount, final int insertPosition) {
-        if (addColumnCount <= 0) {
+        if(addColumnCount <= 0) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             int preTotalColumn = getTotalColumn();
             final int position;
-            if (insertPosition < 0) {
+            if(insertPosition < 0) {
                 position = 0;
             } else {
                 int totalColumn = getTotalColumn();
-                if (insertPosition > totalColumn) {
+                if(insertPosition > totalColumn) {
                     position = totalColumn;
                 } else {
                     position = insertPosition;
@@ -194,26 +194,26 @@ public class TableData {
             
             mapCellDataByColumn(position, preTotalColumn, preTotalColumn + addColumnCount, getTotalRow());
             
-            for (int i = position; i < position + addColumnCount; i++) {
-                Column column = mColumns.get(i);
-                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
+            for(int i = position; i < position + addColumnCount; i++) {
+                Column column = columns.get(i);
+                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
             
-            for (int i = 0; i < mRows.size(); i++) {
-                Row row = mRows.get(i);
-                if (row.getHeight() != TableConfig.INVALID_VALUE) {
-                    int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, mTable.getTableConfig());
-                    if (actualRowHeight > row.getHeight()) {
+            for(int i = 0; i < rows.size(); i++) {
+                Row row = rows.get(i);
+                if(row.getHeight() != TableConfig.INVALID_VALUE) {
+                    int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, table.getTableConfig());
+                    if(actualRowHeight > row.getHeight()) {
                         row.setHeight(actualRowHeight);
                     }
                 } else {
-                    int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, mTable.getTableConfig());
+                    int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, table.getTableConfig());
                     row.setHeight(actualRowHeight);
                 }
             }
             
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -225,32 +225,31 @@ public class TableData {
     public void deleteRow(int... positions) {
         AsyncExecutor.getInstance().execute(() -> {
             List<Row> deleteRows = new ArrayList<>();
-            for (int position : positions) {
-                if (position < 0 || position >= getTotalRow()) {
+            for(int position : positions) {
+                if(position < 0 || position >= getTotalRow()) {
                     continue;
                 }
-                Row row = mRows.get(position);
+                Row row = rows.get(position);
                 deleteRows.add(row);
-                for (Cell cell : row.getCells()) {
-                    for (Column column : mColumns) {
-                        column.getCells().remove(cell);
-                    }
+                for(int j = 0; j < columns.size(); j++) {
+                    Cell cell = row.getCells().get(j);
+                    columns.get(j).getCells().remove(cell);
                 }
             }
             
-            if (deleteRows.size() == 0) {
+            if(deleteRows.size() == 0) {
                 return;
             }
             
-            mRows.removeAll(deleteRows);
+            rows.removeAll(deleteRows);
             
             // 重新统计所有列宽
-            for (int i = 0; i < getTotalColumn(); i++) {
-                Column column = mColumns.get(i);
-                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
+            for(int i = 0; i < getTotalColumn(); i++) {
+                Column column = columns.get(i);
+                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -262,35 +261,34 @@ public class TableData {
      *              如果只想删除开始下标位置的数据，可调用{@link #deleteRow(int...)}或end = start + 1
      */
     public void deleteRowRange(final int start, final int end) {
-        if (start < 0 || start >= getTotalRow() || end < start || end > getTotalRow()) {
+        if(start < 0 || start >= getTotalRow() || end < start || end > getTotalRow()) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             List<Row> deleteRows = new ArrayList<>();
-            for (int i = start; i < end; i++) {
-                Row row = mRows.get(i);
+            for(int i = start; i < end; i++) {
+                Row row = rows.get(i);
                 deleteRows.add(row);
-                for (Cell cell : row.getCells()) {
-                    for (Column column : mColumns) {
-                        column.getCells().remove(cell);
-                    }
+                for(int j = 0; j < columns.size(); j++) {
+                    Cell cell = row.getCells().get(j);
+                    columns.get(j).getCells().remove(cell);
                 }
             }
             
-            if (deleteRows.size() == 0) {
+            if(deleteRows.size() == 0) {
                 return;
             }
             
-            mRows.removeAll(deleteRows);
+            rows.removeAll(deleteRows);
             
             // 重新统计所有列宽
-            for (int i = 0; i < getTotalColumn(); i++) {
-                Column column = mColumns.get(i);
-                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
+            for(int i = 0; i < getTotalColumn(); i++) {
+                Column column = columns.get(i);
+                int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -303,32 +301,31 @@ public class TableData {
         AsyncExecutor.getInstance().execute(() -> {
             List<Column> deleteColumns = new ArrayList<>();
             int totalColumn = getTotalColumn();
-            for (int position : positions) {
-                if (position < 0 || position >= totalColumn) {
+            for(int position : positions) {
+                if(position < 0 || position >= totalColumn) {
                     continue;
                 }
-                Column column = mColumns.get(position);
+                Column column = columns.get(position);
                 deleteColumns.add(column);
-                for (Cell cell : column.getCells()) {
-                    for (Row row : mRows) {
-                        row.getCells().remove(cell);
-                    }
+                for(int j = 0; j < rows.size(); j++) {
+                    Cell cell = column.getCells().get(j);
+                    rows.get(j).getCells().remove(cell);
                 }
             }
             
-            if (deleteColumns.size() == 0) {
+            if(deleteColumns.size() == 0) {
                 return;
             }
             
-            mColumns.removeAll(deleteColumns);
+            columns.removeAll(deleteColumns);
             
             // 重新统计所有行高
-            for (int i = 0; i < getTotalRow(); i++) {
-                Row row = mRows.get(i);
-                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
+            for(int i = 0; i < getTotalRow(); i++) {
+                Row row = rows.get(i);
+                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -340,42 +337,41 @@ public class TableData {
      *              如果只想删除开始下标位置的数据，可调用{@link #deleteRow(int...)}或 end = start + 1
      */
     public void deleteColumnRange(int start, int end) {
-        if (start < 0 || start >= getTotalColumn() || end <= start || end > getTotalColumn()) {
+        if(start < 0 || start >= getTotalColumn() || end <= start || end > getTotalColumn()) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             List<Column> deleteColumns = new ArrayList<>();
-            for (int i = start; i < end; i++) {
-                Column column = mColumns.get(i);
+            for(int i = start; i < end; i++) {
+                Column column = columns.get(i);
                 deleteColumns.add(column);
-                for (Cell cell : column.getCells()) {
-                    for (Row row : mRows) {
-                        row.getCells().remove(cell);
-                    }
+                for(int j = 0; j < rows.size(); j++) {
+                    Cell cell = column.getCells().get(j);
+                    rows.get(j).getCells().remove(cell);
                 }
             }
             
-            if (deleteColumns.size() == 0) {
+            if(deleteColumns.size() == 0) {
                 return;
             }
             
-            mColumns.removeAll(deleteColumns);
+            columns.removeAll(deleteColumns);
             
             // 重新统计所有行高
-            for (int i = 0; i < getTotalRow(); i++) {
-                Row row = mRows.get(i);
-                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
+            for(int i = 0; i < getTotalRow(); i++) {
+                Row row = rows.get(i);
+                int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
     public void clear() {
-        mRows.clear();
-        mColumns.clear();
-        mTable.syncReDraw();
+        rows.clear();
+        columns.clear();
+        table.syncReDraw();
     }
     
     /**
@@ -385,16 +381,16 @@ public class TableData {
      * @param to   目标位置
      */
     public void swapColumn(int from, int to) {
-        if (from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
+        if(from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
-            Collections.swap(mColumns, from, to);
-            for (Row row : mRows) {
+            Collections.swap(columns, from, to);
+            for(Row row : rows) {
                 Collections.swap(row.getCells(), from, to);
             }
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -405,16 +401,16 @@ public class TableData {
      * @param to   目标位置
      */
     public void swapRow(int from, int to) {
-        if (from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
+        if(from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
-            Collections.swap(mRows, from, to);
-            for (Column column : mColumns) {
+            Collections.swap(rows, from, to);
+            for(Column column : columns) {
                 Collections.swap(column.getCells(), from, to);
             }
-            mTable.asyncReDraw();
+            table.asyncReDraw();
         });
     }
     
@@ -427,31 +423,31 @@ public class TableData {
      * @param totalColumn    总列数
      */
     private void mapCellDataByRow(int insertPosition, int rowStart, int totalRow, int totalColumn) {
-        for (int i = rowStart; i < totalRow; i++) {
+        for(int i = rowStart; i < totalRow; i++) {
             Row row = new Row();
             List<Cell> rowCells = new ArrayList<>();
             row.setCells(rowCells);
             
-            mRows.add(insertPosition, row);
+            rows.add(insertPosition, row);
             
-            CellFactory cellFactory = mTable.getCellFactory();
-            for (int j = 0; j < totalColumn; j++) {
+            CellFactory cellFactory = table.getCellFactory();
+            for(int j = 0; j < totalColumn; j++) {
                 Cell cell = cellFactory.get(insertPosition, j);
-                if (cell == null) {
+                if(cell == null) {
                     cell = new Cell();
                 }
                 
                 rowCells.add(cell);
                 
-                if (j >= mColumns.size()) {
+                if(j >= columns.size()) {
                     Column column = new Column();
                     List<Cell> columnCells = new ArrayList<>();
                     column.setCells(columnCells);
-                    mColumns.add(column);
+                    columns.add(column);
                     
                     columnCells.add(cell);
                 } else {
-                    mColumns.get(j).getCells().add(insertPosition, cell);
+                    columns.get(j).getCells().add(insertPosition, cell);
                 }
             }
             
@@ -468,31 +464,31 @@ public class TableData {
      * @param totalColumn    总列数
      */
     private void mapCellDataByColumn(int insertPosition, int columnStart, int totalColumn, int totalRow) {
-        for (int i = columnStart; i < totalColumn; i++) {
+        for(int i = columnStart; i < totalColumn; i++) {
             Column column = new Column();
             List<Cell> columnCells = new ArrayList<>();
             column.setCells(columnCells);
             
-            mColumns.add(insertPosition, column);
+            columns.add(insertPosition, column);
             
-            CellFactory cellFactory = mTable.getCellFactory();
-            for (int j = 0; j < totalRow; j++) {
+            CellFactory cellFactory = table.getCellFactory();
+            for(int j = 0; j < totalRow; j++) {
                 Cell cell = cellFactory.get(j, insertPosition);
-                if (cell == null) {
+                if(cell == null) {
                     cell = new Cell();
                 }
                 
                 columnCells.add(cell);
                 
-                if (j >= mRows.size()) {
+                if(j >= rows.size()) {
                     Row row = new Row();
                     List<Cell> rowCells = new ArrayList<>();
                     row.setCells(rowCells);
-                    mRows.add(row);
+                    rows.add(row);
                     
                     rowCells.add(cell);
                 } else {
-                    mRows.get(j).getCells().add(insertPosition, cell);
+                    rows.get(j).getCells().add(insertPosition, cell);
                 }
             }
             

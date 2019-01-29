@@ -13,23 +13,39 @@ public class Column {
     /**
      * 列宽度
      */
-    private int mWidth = TableConfig.INVALID_VALUE;
+    private int width = TableConfig.INVALID_VALUE;
     
-    private List<Cell> mCells;
+    /**
+     * 是否拖拽改变了列宽
+     */
+    private boolean dragChangeSize;
+    
+    private List<Cell> cells;
     
     public int getWidth() {
-        return mWidth;
+        return width;
     }
     
     public void setWidth(int width) {
-        mWidth = width;
+        this.width = width;
+    }
+    
+    public boolean isDragChangeSize() {
+        return dragChangeSize;
+    }
+    
+    /**
+     * @param dragChangeSize {@code true}则列宽自适应取消，始终根据拖拽改变后的列宽显示
+     */
+    public void setDragChangeSize(boolean dragChangeSize) {
+        this.dragChangeSize = dragChangeSize;
     }
     
     public List<Cell> getCells() {
-        return mCells;
+        return cells;
     }
     
     public void setCells(List<Cell> cells) {
-        mCells = cells;
+        this.cells = cells;
     }
 }

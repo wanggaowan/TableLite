@@ -121,10 +121,10 @@ public class SurfaceTableRender extends TableRender implements SurfaceHolder.Cal
         List<Row> rows = mTable.getTableData().getRows();
         List<Column> columns = mTable.getTableData().getColumns();
         if(!mDrawEnable
-                || rowIndex < 0
-                || rowIndex >= rows.size()
-                || columnIndex < 0
-                || columnIndex >= columns.size()) {
+            || rowIndex < 0
+            || rowIndex >= rows.size()
+            || columnIndex < 0
+            || columnIndex >= columns.size()) {
             return;
         }
         
@@ -158,9 +158,9 @@ public class SurfaceTableRender extends TableRender implements SurfaceHolder.Cal
         int screenWidth = mTable.getShowRect().width();
         int screenHeight = mTable.getShowRect().height();
         if(drawRect.left >= screenWidth
-                || drawRect.right <= 0
-                || drawRect.top >= screenHeight
-                || drawRect.bottom <= 0) {
+            || drawRect.right <= 0
+            || drawRect.top >= screenHeight
+            || drawRect.bottom <= 0) {
             return;
         }
         

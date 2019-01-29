@@ -3,7 +3,7 @@ package com.keqiang.table.model;
 import com.keqiang.table.TableConfig;
 
 /**
- * 配置单元格数据(不包括绘制内容)
+ * 配置单元格数据
  *
  * @author Created by 汪高皖 on 2019/1/15 0015 08:32
  */
@@ -11,31 +11,31 @@ public class Cell {
     /**
      * 单元格的宽度，如果当前单元格所在列最大宽度大于此值，则以最大宽度为主
      */
-    private int mWidth = TableConfig.INVALID_VALUE;
+    private int width = TableConfig.INVALID_VALUE;
     
     /**
      * 单元格的高度，如果当前单元格所在行最大高度大于此值，则以最大高度为主
      */
-    private int mHeight = TableConfig.INVALID_VALUE;
+    private int height = TableConfig.INVALID_VALUE;
     
-    private Object mData;
+    private Object data;
     
     public Cell() {
     
     }
     
     public Cell(Object data) {
-        mData = data;
+        this.data = data;
     }
     
     public Cell(int width, int height, Object data) {
-        mWidth = width;
-        mHeight = height;
-        mData = data;
+        this.width = width;
+        this.height = height;
+        this.data = data;
     }
     
     public int getWidth() {
-        return mWidth;
+        return width;
     }
     
     /**
@@ -70,11 +70,11 @@ public class Cell {
      *              高度大小受{@link TableConfig#minRowHeight}和{@link TableConfig#maxRowHeight}限制
      */
     public void setWidth(int width) {
-        mWidth = width;
+        this.width = width;
     }
     
     public int getHeight() {
-        return mHeight;
+        return height;
     }
     
     /**
@@ -110,15 +110,15 @@ public class Cell {
      * </pre>
      */
     public void setHeight(int height) {
-        mHeight = height;
+        this.height = height;
     }
     
     public Object getData() {
-        return mData;
+        return data;
     }
     
     public void setData(Object data) {
-        mData = data;
+        this.data = data;
     }
     
     /**
