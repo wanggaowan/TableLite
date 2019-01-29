@@ -285,7 +285,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
     }
     
     @Override
-    public TouchHelper getTouchHelper() {
+    public TouchHelper<T> getTouchHelper() {
         return mTouchHelper;
     }
     

@@ -323,7 +323,7 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
     }
     
     @Override
-    public TouchHelper getTouchHelper() {
+    public TouchHelper<T> getTouchHelper() {
         return mTouchHelper;
     }
     
