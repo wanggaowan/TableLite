@@ -67,7 +67,7 @@ public class Cell {
      *     ...// 省略
      *
      * @param width 如果值为{@link TableConfig#INVALID_VALUE},则表示宽度自适应,自适应宽度需要覆写{@link #measureWidth()}，
-     *              高度大小受{@link TableConfig#minRowHeight}和{@link TableConfig#maxRowHeight}限制
+     *              宽度大小受{@link TableConfig#minColumnWidth}和{@link TableConfig#maxColumnWidth}限制
      */
     public void setWidth(int width) {
         this.width = width;
