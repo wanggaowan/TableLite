@@ -23,38 +23,38 @@ public class Utils {
      * @return 从开始单元格到结束单元格(不包含结束单元格)中所有单元格最大高度
      */
     public static int getActualRowHeight(Row row, int start, int end, TableConfig tableConfig) {
-        if(row.isDragChangeSize()) {
+        if (row.isDragChangeSize()) {
             return row.getHeight();
         }
         
         int actualRowHeight = 0;
         
         List<Cell> cells = row.getCells();
-        for(int i = start; i < end; i++) {
+        for (int i = start; i < end; i++) {
             Cell cell = cells.get(i);
             int height = cell.getHeight();
             int rowHeight = tableConfig.getRowHeight();
-            if(height == TableConfig.INVALID_VALUE && rowHeight == TableConfig.INVALID_VALUE) {
+            if (height == TableConfig.INVALID_VALUE && rowHeight == TableConfig.INVALID_VALUE) {
                 // 自适应单元格行高
                 int measureHeight = cell.measureHeight();
-                if(actualRowHeight < measureHeight) {
+                if (actualRowHeight < measureHeight) {
                     actualRowHeight = measureHeight;
                 }
-            } else if(height != TableConfig.INVALID_VALUE) {
-                if(actualRowHeight < height) {
+            } else if (height != TableConfig.INVALID_VALUE) {
+                if (actualRowHeight < height) {
                     actualRowHeight = height;
                 }
             } else {
                 // 单元格自适应但配置了全局行高，所以使用全局行高
-                if(actualRowHeight < rowHeight) {
+                if (actualRowHeight < rowHeight) {
                     actualRowHeight = rowHeight;
                 }
             }
         }
         
-        if(actualRowHeight < tableConfig.getMinRowHeight()) {
+        if (actualRowHeight < tableConfig.getMinRowHeight()) {
             actualRowHeight = tableConfig.getMinRowHeight();
-        } else if(tableConfig.getMaxRowHeight() != TableConfig.INVALID_VALUE
+        } else if (tableConfig.getMaxRowHeight() != TableConfig.INVALID_VALUE
             && actualRowHeight > tableConfig.getMaxRowHeight()) {
             actualRowHeight = tableConfig.getMaxRowHeight();
         }
@@ -72,38 +72,38 @@ public class Utils {
      * @return 从开始单元格到结束单元格(不包含结束单元格)中所有单元格最大宽度
      */
     public static int getActualColumnWidth(Column column, int start, int end, TableConfig tableConfig) {
-        if(column.isDragChangeSize()) {
+        if (column.isDragChangeSize()) {
             return column.getWidth();
         }
         
         int actualColumnWidth = 0;
         
         List<Cell> cells = column.getCells();
-        for(int i = start; i < end; i++) {
+        for (int i = start; i < end; i++) {
             Cell cell = cells.get(i);
             int width = cell.getWidth();
             int columnWidth = tableConfig.getColumnWidth();
-            if(width == TableConfig.INVALID_VALUE && columnWidth == TableConfig.INVALID_VALUE) {
+            if (width == TableConfig.INVALID_VALUE && columnWidth == TableConfig.INVALID_VALUE) {
                 // 自适应单元格列宽
                 int measureWidth = cell.measureWidth();
-                if(actualColumnWidth < measureWidth) {
+                if (actualColumnWidth < measureWidth) {
                     actualColumnWidth = measureWidth;
                 }
-            } else if(width != TableConfig.INVALID_VALUE) {
-                if(actualColumnWidth < width) {
+            } else if (width != TableConfig.INVALID_VALUE) {
+                if (actualColumnWidth < width) {
                     actualColumnWidth = width;
                 }
             } else {
                 // 单元格自适应但配置了全局列宽，所以使用全局列宽
-                if(actualColumnWidth < columnWidth) {
+                if (actualColumnWidth < columnWidth) {
                     actualColumnWidth = columnWidth;
                 }
             }
         }
         
-        if(actualColumnWidth < tableConfig.getMinColumnWidth()) {
+        if (actualColumnWidth < tableConfig.getMinColumnWidth()) {
             actualColumnWidth = tableConfig.getMinColumnWidth();
-        } else if(tableConfig.getMaxColumnWidth() != TableConfig.INVALID_VALUE
+        } else if (tableConfig.getMaxColumnWidth() != TableConfig.INVALID_VALUE
             && actualColumnWidth > tableConfig.getMaxColumnWidth()) {
             actualColumnWidth = tableConfig.getMaxColumnWidth();
         }

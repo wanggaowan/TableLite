@@ -38,7 +38,7 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
     public SurfaceTableRender(@NonNull ITable<T> table, SurfaceHolder holder) {
         super(table);
         mHolder = holder;
-        if(mHolder != null) {
+        if (mHolder != null) {
             mHolder.addCallback(this);
         }
     }
@@ -58,24 +58,24 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
     public void surfaceDestroyed(SurfaceHolder holder) {
         mDrawEnable = false;
         Surface surface = mHolder.getSurface();
-        if(surface != null) {
+        if (surface != null) {
             surface.release();
         }
     }
     
     public void setHolder(SurfaceHolder holder) {
-        if(mHolder == holder) {
+        if (mHolder == holder) {
             return;
         }
         
-        if(mHolder != null) {
+        if (mHolder != null) {
             mHolder.removeCallback(this);
         }
         
         mDrawEnable = false;
         mDrawCount = 0;
         mHolder = holder;
-        if(mHolder != null) {
+        if (mHolder != null) {
             mHolder.addCallback(this);
         }
     }
@@ -86,20 +86,20 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
      * @return {@code false}没有执行绘制操作，{@code true}已重新绘制
      */
     public boolean draw() {
-        if(!mDrawEnable) {
+        if (!mDrawEnable) {
             return false;
         }
         
         Canvas canvas = mHolder.lockCanvas();
-        if(canvas == null) {
+        if (canvas == null) {
             return false;
         }
         
         // 清屏
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         boolean draw = draw(canvas);
-        if(draw) {
-            if(mDrawCount < 2) {
+        if (draw) {
+            if (mDrawCount < 2) {
                 mDrawCount++;
             }
         } else {
@@ -121,7 +121,7 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
     public void reDrawCell(int rowIndex, int columnIndex, Object data) {
         List<Row<T>> rows = mTable.getTableData().getRows();
         List<Column<T>> columns = mTable.getTableData().getColumns();
-        if(!mDrawEnable
+        if (!mDrawEnable
             || rowIndex < 0
             || rowIndex >= rows.size()
             || columnIndex < 0
@@ -136,7 +136,7 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
         int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
         Column column = columns.get(columnIndex);
         int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
-        if(actualRowHeight != row.getHeight() || actualColumnWidth != column.getWidth()) {
+        if (actualRowHeight != row.getHeight() || actualColumnWidth != column.getWidth()) {
             row.setHeight(actualRowHeight);
             column.setWidth(actualColumnWidth);
             draw();
@@ -145,27 +145,27 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
         
         List<ShowCell> showCells = getShowCells();
         Rect drawRect = null;
-        for(ShowCell showCell : showCells) {
-            if(showCell.getRow() == rowIndex && showCell.getColumn() == columnIndex) {
+        for (ShowCell showCell : showCells) {
+            if (showCell.getRow() == rowIndex && showCell.getColumn() == columnIndex) {
                 drawRect = showCell.getDrawRect();
                 break;
             }
         }
         
-        if(drawRect == null) {
+        if (drawRect == null) {
             return;
         }
         
         int screenWidth = mTable.getShowRect().width();
         int screenHeight = mTable.getShowRect().height();
-        if(drawRect.left >= screenWidth
+        if (drawRect.left >= screenWidth
             || drawRect.right <= 0
             || drawRect.top >= screenHeight
             || drawRect.bottom <= 0) {
             return;
         }
         
-        if(mDrawCount <= 2) {
+        if (mDrawCount <= 2) {
             // 前两帧需要完整绘制，SurfaceView是双缓冲机制，是两个Canvas交替显示
             // 第一帧显示第一个Canvas，第二帧显示第二个Canvas，这时第一个Canvas退到后台。
             // 从第三帧开始第一个和第二个Canvas交替前后台显示，此时可以对比两个Canvas的差异进行局部刷新
@@ -176,17 +176,17 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
         mClipRect.set(drawRect);
         Canvas canvas = mHolder.lockCanvas(mClipRect);
         int tryCount = 5;
-        while(canvas == null) {
+        while (canvas == null) {
             canvas = mHolder.lockCanvas(mClipRect);
-            if(canvas != null) {
+            if (canvas != null) {
                 break;
-            } else if(tryCount <= 0) {
+            } else if (tryCount <= 0) {
                 break;
             } else {
                 tryCount--;
             }
         }
-        if(canvas == null) {
+        if (canvas == null) {
             return;
         }
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -195,7 +195,7 @@ public class SurfaceTableRender<T extends Cell> extends TableRender<T> implement
         // 这样就会改变单元格原本大小
         mClipRect.set(drawRect);
         ICellDraw<T> iCellDraw = mTable.getICellDraw();
-        if(iCellDraw != null) {
+        if (iCellDraw != null) {
             iCellDraw.onCellDraw(mTable, canvas, cell, mClipRect, rowIndex, columnIndex);
         }
         mHolder.unlockCanvasAndPost(canvas);

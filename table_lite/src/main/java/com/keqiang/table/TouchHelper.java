@@ -153,10 +153,10 @@ public class TouchHelper<T extends Cell> {
      */
     public boolean dispatchTouchEvent(View view, MotionEvent event) {
         ViewParent parent = view.getParent();
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //ACTION_DOWN的时候，赶紧把事件hold住
-                if(mTable.getShowRect().contains((int) event.getX(), (int) event.getY())) {
+                if (mTable.getShowRect().contains((int) event.getX(), (int) event.getY())) {
                     //判断是否落在图表内容区中
                     parent.requestDisallowInterceptTouchEvent(true);
                 } else {
@@ -166,11 +166,11 @@ public class TouchHelper<T extends Cell> {
             
             case MotionEvent.ACTION_MOVE:
                 boolean isDisallowIntercept = true;
-                if(mScrollY == 0 || mScrollY >= mTable.getActualSizeRect().height() - mTable.getShowRect().height()) {
+                if (mScrollY == 0 || mScrollY >= mTable.getActualSizeRect().height() - mTable.getShowRect().height()) {
                     isDisallowIntercept = false;
                 }
                 parent.requestDisallowInterceptTouchEvent(isDisallowIntercept);
-                if(isDisallowIntercept) {
+                if (isDisallowIntercept) {
                     return true;
                 }
                 break;
@@ -186,9 +186,9 @@ public class TouchHelper<T extends Cell> {
      * 处理触摸时间
      */
     public boolean onTouchEvent(MotionEvent event) {
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                if(mLongPressDone) {
+                if (mLongPressDone) {
                     boolean dispose = dragChangeSize(longPressX - event.getX(),
                         longPressY - event.getY(), false);
                     longPressX = event.getX();
@@ -199,7 +199,7 @@ public class TouchHelper<T extends Cell> {
             
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                if(mDragChangeSize) {
+                if (mDragChangeSize) {
                     mDragChangeSize = false;
                     notifyViewChanged();
                 }
@@ -255,7 +255,7 @@ public class TouchHelper<T extends Cell> {
      * @param enableFlingRate 表格实际大小是可显示区域大小的几倍时才开启快速滑动,范围[1,∞)
      */
     public void setEnableForFlingRate(float enableFlingRate) {
-        if(enableFlingRate < 1) {
+        if (enableFlingRate < 1) {
             mEnableFlingRate = 1;
         } else {
             mEnableFlingRate = enableFlingRate;
@@ -301,8 +301,8 @@ public class TouchHelper<T extends Cell> {
             mClickRowIndex = TableConfig.INVALID_VALUE;
             mClickColumnIndex = TableConfig.INVALID_VALUE;
             List<ShowCell> showCells = mTable.getShowCells();
-            for(ShowCell showCell : showCells) {
-                if(showCell.getDrawRect().contains(((int) e.getX()), ((int) e.getY()))) {
+            for (ShowCell showCell : showCells) {
+                if (showCell.getDrawRect().contains(((int) e.getX()), ((int) e.getY()))) {
                     mClickRowIndex = showCell.getRow();
                     mClickColumnIndex = showCell.getColumn();
                     break;
@@ -313,14 +313,14 @@ public class TouchHelper<T extends Cell> {
         
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            if(mClickRowIndex == TableConfig.INVALID_VALUE || mClickColumnIndex == TableConfig.INVALID_VALUE) {
+            if (mClickRowIndex == TableConfig.INVALID_VALUE || mClickColumnIndex == TableConfig.INVALID_VALUE) {
                 return false;
             } else {
                 TableConfig tableConfig = mTable.getTableConfig();
                 int highLightRowIndex;
                 int highLightColumnIndex;
                 
-                if(mClickColumnIndex != 0 || !tableConfig.isHighLightSelectColumn()
+                if (mClickColumnIndex != 0 || !tableConfig.isHighLightSelectColumn()
                     || (mClickRowIndex == 0 && (tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.NONE
                     || tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.COLUMN))) {
                     highLightRowIndex = TableConfig.INVALID_VALUE;
@@ -329,7 +329,7 @@ public class TouchHelper<T extends Cell> {
                     highLightRowIndex = mClickRowIndex;
                 }
                 
-                if(mClickRowIndex != 0 || !tableConfig.isHighLightSelectRow()
+                if (mClickRowIndex != 0 || !tableConfig.isHighLightSelectRow()
                     || (mClickColumnIndex == 0 && (tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.NONE
                     || tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.ROW))) {
                     highLightColumnIndex = TableConfig.INVALID_VALUE;
@@ -338,13 +338,13 @@ public class TouchHelper<T extends Cell> {
                     highLightColumnIndex = mClickColumnIndex;
                 }
                 
-                if(highLightRowIndex != mHighLightRowIndex || highLightColumnIndex != mHighLightColumnIndex) {
+                if (highLightRowIndex != mHighLightRowIndex || highLightColumnIndex != mHighLightColumnIndex) {
                     mHighLightRowIndex = highLightRowIndex;
                     mHighLightColumnIndex = highLightColumnIndex;
                     notifyViewChanged();
                 }
                 
-                if(mCellClickListener != null) {
+                if (mCellClickListener != null) {
                     mCellClickListener.onClick(mClickRowIndex, mClickColumnIndex);
                 }
                 return true;
@@ -362,13 +362,13 @@ public class TouchHelper<T extends Cell> {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             boolean dispose = dragChangeSize(distanceX, distanceY, false);
-            if(dispose) {
+            if (dispose) {
                 return true;
             }
             
             Rect showRect = mTable.getShowRect();
             Rect actualSizeRect = mTable.getActualSizeRect();
-            if(showRect.width() >= actualSizeRect.width() && showRect.height() >= actualSizeRect.height()) {
+            if (showRect.width() >= actualSizeRect.width() && showRect.height() >= actualSizeRect.height()) {
                 return false;
             }
             
@@ -376,7 +376,7 @@ public class TouchHelper<T extends Cell> {
             int originalY = mScrollY;
             mScrollX += distanceX;
             mScrollY += distanceY;
-            if(judgeNeedUpdateTable(originalX, originalY)) {
+            if (judgeNeedUpdateTable(originalX, originalY)) {
                 notifyViewChanged();
                 return true;
             } else {
@@ -388,13 +388,13 @@ public class TouchHelper<T extends Cell> {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             Rect showRect = mTable.getShowRect();
             Rect actualSizeRect = mTable.getActualSizeRect();
-            if(showRect.width() * mEnableFlingRate >= actualSizeRect.width() && showRect.height() * mEnableFlingRate >= actualSizeRect.height()) {
+            if (showRect.width() * mEnableFlingRate >= actualSizeRect.width() && showRect.height() * mEnableFlingRate >= actualSizeRect.height()) {
                 // 只有表格宽且表格高度有显示区域两倍大小时才可快速滑动
                 return false;
             }
             
             //根据滑动速率 设置Scroller final值,然后使用属性动画计算
-            if(Math.abs(velocityX) > mMinimumFlingVelocity || Math.abs(velocityY) > mMinimumFlingVelocity) {
+            if (Math.abs(velocityX) > mMinimumFlingVelocity || Math.abs(velocityY) > mMinimumFlingVelocity) {
                 mScroller.setFinalX(0);
                 mScroller.setFinalY(0);
                 mTempScrollX = mScrollX;
@@ -419,24 +419,24 @@ public class TouchHelper<T extends Cell> {
     private boolean judgeNeedUpdateTable(int originalX, int originalY) {
         Rect showRect = mTable.getShowRect();
         Rect actualSizeRect = mTable.getActualSizeRect();
-        if(mScrollX < 0) {
+        if (mScrollX < 0) {
             mScrollX = 0;
         } else {
             int diff = actualSizeRect.width() - showRect.width();
-            if(diff <= 0) {
+            if (diff <= 0) {
                 mScrollX = 0;
-            } else if(mScrollX > diff) {
+            } else if (mScrollX > diff) {
                 mScrollX = diff;
             }
         }
         
-        if(mScrollY < 0) {
+        if (mScrollY < 0) {
             mScrollY = 0;
         } else {
             int diff = actualSizeRect.height() - showRect.height();
-            if(diff <= 0) {
+            if (diff <= 0) {
                 mScrollY = 0;
-            } else if(mScrollY > diff) {
+            } else if (mScrollY > diff) {
                 mScrollY = diff;
             }
         }
@@ -451,13 +451,13 @@ public class TouchHelper<T extends Cell> {
         int scrollX = Math.abs(mScroller.getFinalX());
         int scrollY = Math.abs(mScroller.getFinalY());
         
-        if(doubleWay) {
+        if (doubleWay) {
             mEndPoint.set((int) (mScroller.getFinalX() * mFlingRate),
                 (int) (mScroller.getFinalY() * mFlingRate));
-        } else if(scrollX > scrollY) {
+        } else if (scrollX > scrollY) {
             Rect showRect = mTable.getShowRect();
             Rect actualSizeRect = mTable.getActualSizeRect();
-            if(actualSizeRect.width() <= showRect.width() * mEnableFlingRate) {
+            if (actualSizeRect.width() <= showRect.width() * mEnableFlingRate) {
                 // 只有表格实际宽比显示区域宽度大mEnableFlingRate倍才可快速滑动
                 return;
             }
@@ -465,7 +465,7 @@ public class TouchHelper<T extends Cell> {
         } else {
             Rect showRect = mTable.getShowRect();
             Rect actualSizeRect = mTable.getActualSizeRect();
-            if(actualSizeRect.height() <= showRect.height() * mEnableFlingRate) {
+            if (actualSizeRect.height() <= showRect.height() * mEnableFlingRate) {
                 // 只有表格实际高比显示区域高度大mEnableFlingRate倍才可快速滑动
                 return;
             }
@@ -475,26 +475,26 @@ public class TouchHelper<T extends Cell> {
         final ValueAnimator valueAnimator = ValueAnimator.ofObject(mEvaluator, mStartPoint, mEndPoint);
         valueAnimator.setInterpolator(mInterpolator);
         valueAnimator.addUpdateListener(animation -> {
-            if(mFling) {
+            if (mFling) {
                 Point point = (Point) animation.getAnimatedValue();
                 int originalX = mScrollX;
                 int originalY = mScrollY;
                 mScrollX = mTempScrollX - point.x;
                 mScrollY = mTempScrollY - point.y;
-                if(judgeNeedUpdateTable(originalX, originalY)) {
+                if (judgeNeedUpdateTable(originalX, originalY)) {
                     notifyViewChanged();
                 }
                 
                 // 以下判断依据了judgeNeedUpdateTable的结果，
                 // judgeNeedUpdateTable会更改mScrollX和mScrollY的值
-                if(mScrollX == 0 && mScrollY == 0) {
+                if (mScrollX == 0 && mScrollY == 0) {
                     animation.cancel();
                 } else {
                     Rect actualSizeRect = mTable.getActualSizeRect();
                     Rect showRect = mTable.getShowRect();
                     int xDiff = actualSizeRect.width() - showRect.width();
                     int yDiff = actualSizeRect.height() - showRect.height();
-                    if(mScrollX == xDiff && mScrollY == yDiff) {
+                    if (mScrollX == xDiff && mScrollY == yDiff) {
                         animation.cancel();
                     }
                 }
@@ -517,7 +517,7 @@ public class TouchHelper<T extends Cell> {
         int dragChangeSizeRowIndex;
         int dragChangeSizeColumnIndex;
         
-        if(mClickColumnIndex != 0 || tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE
+        if (mClickColumnIndex != 0 || tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE
             || (mClickRowIndex == 0 && (tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.NONE
             || tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.COLUMN))) {
             dragChangeSizeRowIndex = TableConfig.INVALID_VALUE;
@@ -526,7 +526,7 @@ public class TouchHelper<T extends Cell> {
             dragChangeSizeRowIndex = mClickRowIndex;
         }
         
-        if(mClickRowIndex != 0 || tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE
+        if (mClickRowIndex != 0 || tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE
             || (mClickColumnIndex == 0 && (tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.NONE
             || tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.ROW))) {
             dragChangeSizeColumnIndex = TableConfig.INVALID_VALUE;
@@ -535,9 +535,9 @@ public class TouchHelper<T extends Cell> {
             dragChangeSizeColumnIndex = mClickColumnIndex;
         }
         
-        if(dragChangeSizeRowIndex != TableConfig.INVALID_VALUE || dragChangeSizeColumnIndex != TableConfig.INVALID_VALUE) {
-            if(dragChangeSizeRowIndex == 0 && dragChangeSizeColumnIndex == 0) {
-                if(!mLongPressDone && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.LONG_PRESS
+        if (dragChangeSizeRowIndex != TableConfig.INVALID_VALUE || dragChangeSizeColumnIndex != TableConfig.INVALID_VALUE) {
+            if (dragChangeSizeRowIndex == 0 && dragChangeSizeColumnIndex == 0) {
+                if (!mLongPressDone && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.LONG_PRESS
                     && tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.LONG_PRESS) {
                     return false;
                 }
@@ -550,29 +550,29 @@ public class TouchHelper<T extends Cell> {
                 Column<T> column = tableData.getColumns().get(0);
                 int height = (int) (row.getHeight() - distanceY);
                 int width = (int) (column.getWidth() - distanceX);
-                if(height < tableConfig.getMinRowHeight()) {
+                if (height < tableConfig.getMinRowHeight()) {
                     height = tableConfig.getMinRowHeight();
-                } else if(tableConfig.getMaxRowHeight() != TableConfig.INVALID_VALUE && height > tableConfig.getMaxRowHeight()) {
+                } else if (tableConfig.getMaxRowHeight() != TableConfig.INVALID_VALUE && height > tableConfig.getMaxRowHeight()) {
                     height = tableConfig.getMaxRowHeight();
                 }
                 
-                if(width < tableConfig.getMinColumnWidth()) {
+                if (width < tableConfig.getMinColumnWidth()) {
                     width = tableConfig.getMinColumnWidth();
-                } else if(tableConfig.getMaxColumnWidth() != TableConfig.INVALID_VALUE && width > tableConfig.getMaxColumnWidth()) {
+                } else if (tableConfig.getMaxColumnWidth() != TableConfig.INVALID_VALUE && width > tableConfig.getMaxColumnWidth()) {
                     width = tableConfig.getMaxColumnWidth();
                 }
                 
                 row.setDragChangeSize(true);
                 column.setDragChangeSize(true);
-                if(row.getHeight() != height || column.getWidth() != width) {
+                if (row.getHeight() != height || column.getWidth() != width) {
                     row.setHeight(height);
                     column.setWidth(width);
                     notifyViewChanged();
-                } else if(mustNotifyViewChange) {
+                } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
-            } else if(dragChangeSizeRowIndex != TableConfig.INVALID_VALUE) {
-                if(!mLongPressDone && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.LONG_PRESS) {
+            } else if (dragChangeSizeRowIndex != TableConfig.INVALID_VALUE) {
+                if (!mLongPressDone && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.LONG_PRESS) {
                     return false;
                 }
                 
@@ -582,21 +582,21 @@ public class TouchHelper<T extends Cell> {
                 TableData<T> tableData = mTable.getTableData();
                 Row<T> row = tableData.getRows().get(dragChangeSizeRowIndex);
                 int height = (int) (row.getHeight() - distanceY);
-                if(height < tableConfig.getMinRowHeight()) {
+                if (height < tableConfig.getMinRowHeight()) {
                     height = tableConfig.getMinRowHeight();
-                } else if(tableConfig.getMaxRowHeight() != TableConfig.INVALID_VALUE && height > tableConfig.getMaxRowHeight()) {
+                } else if (tableConfig.getMaxRowHeight() != TableConfig.INVALID_VALUE && height > tableConfig.getMaxRowHeight()) {
                     height = tableConfig.getMaxRowHeight();
                 }
                 
                 row.setDragChangeSize(true);
-                if(row.getHeight() != height) {
+                if (row.getHeight() != height) {
                     row.setHeight(height);
                     notifyViewChanged();
-                } else if(mustNotifyViewChange) {
+                } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
             } else {
-                if(!mLongPressDone && tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.LONG_PRESS) {
+                if (!mLongPressDone && tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.LONG_PRESS) {
                     return false;
                 }
                 
@@ -606,17 +606,17 @@ public class TouchHelper<T extends Cell> {
                 TableData<T> tableData = mTable.getTableData();
                 Column<T> column = tableData.getColumns().get(dragChangeSizeColumnIndex);
                 int width = (int) (column.getWidth() - distanceX);
-                if(width < tableConfig.getMinColumnWidth()) {
+                if (width < tableConfig.getMinColumnWidth()) {
                     width = tableConfig.getMinColumnWidth();
-                } else if(tableConfig.getMaxColumnWidth() != TableConfig.INVALID_VALUE && width > tableConfig.getMaxColumnWidth()) {
+                } else if (tableConfig.getMaxColumnWidth() != TableConfig.INVALID_VALUE && width > tableConfig.getMaxColumnWidth()) {
                     width = tableConfig.getMaxColumnWidth();
                 }
                 
                 column.setDragChangeSize(true);
-                if(column.getWidth() != width) {
+                if (column.getWidth() != width) {
                     column.setWidth(width);
                     notifyViewChanged();
-                } else if(mustNotifyViewChange) {
+                } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
             }

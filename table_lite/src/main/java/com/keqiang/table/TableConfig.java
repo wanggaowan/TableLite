@@ -293,11 +293,11 @@ public class TableConfig {
      *                   默认{@link FixGravity#TOP_ROW}
      */
     public void addRowFix(int row, @FixGravity int fixGravity) {
-        if(fixGravity == FixGravity.BOTTOM_ROW) {
-            if(!mRowTopFix.contains(row)) {
+        if (fixGravity == FixGravity.BOTTOM_ROW) {
+            if (!mRowTopFix.contains(row)) {
                 mRowBottomFix.add(row);
             }
-        } else if(!mRowBottomFix.contains(row)) {
+        } else if (!mRowBottomFix.contains(row)) {
             mRowTopFix.add(row);
         }
     }
@@ -308,7 +308,7 @@ public class TableConfig {
      * @param row 行位置
      */
     public void removeRowFix(int row, @FixGravity int fixGravity) {
-        if(fixGravity == FixGravity.BOTTOM_ROW) {
+        if (fixGravity == FixGravity.BOTTOM_ROW) {
             mRowBottomFix.remove(row);
         } else {
             mRowTopFix.remove(row);
@@ -319,7 +319,7 @@ public class TableConfig {
      * 清除所有顶部或底部固定行
      */
     public void clearRowFix(@FixGravity int fixGravity) {
-        if(fixGravity == FixGravity.BOTTOM_ROW) {
+        if (fixGravity == FixGravity.BOTTOM_ROW) {
             mRowBottomFix.clear();
         } else {
             mRowTopFix.clear();
@@ -342,11 +342,11 @@ public class TableConfig {
      *                   默认{@link FixGravity#LEFT_COLUMN}
      */
     public void addColumnFix(int column, @FixGravity int fixGravity) {
-        if(fixGravity == FixGravity.RIGHT_COLUMN) {
-            if(!mColumnLeftFix.contains(column)) {
+        if (fixGravity == FixGravity.RIGHT_COLUMN) {
+            if (!mColumnLeftFix.contains(column)) {
                 mColumnRightFix.add(column);
             }
-        } else if(!mColumnRightFix.contains(column)) {
+        } else if (!mColumnRightFix.contains(column)) {
             mColumnLeftFix.add(column);
         }
     }
@@ -357,7 +357,7 @@ public class TableConfig {
      * @param column 列位置
      */
     public void removeColumnFix(int column, @FixGravity int fixGravity) {
-        if(fixGravity == FixGravity.RIGHT_COLUMN) {
+        if (fixGravity == FixGravity.RIGHT_COLUMN) {
             mColumnRightFix.remove(column);
         } else {
             mColumnLeftFix.remove(column);
@@ -368,7 +368,7 @@ public class TableConfig {
      * 清除所有列固定
      */
     public void clearColumnFix(@FixGravity int fixGravity) {
-        if(fixGravity == FixGravity.RIGHT_COLUMN) {
+        if (fixGravity == FixGravity.RIGHT_COLUMN) {
             mColumnRightFix.clear();
         } else {
             mColumnLeftFix.clear();

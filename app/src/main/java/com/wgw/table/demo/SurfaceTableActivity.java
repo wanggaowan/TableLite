@@ -56,13 +56,13 @@ public class SurfaceTableActivity extends AppCompatActivity {
         });
         
         mRowList = new ArrayList<>();
-        for(int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; i++) {
             Row row = new Row();
             mRowList.add(row);
             
             List<Column> columns = new ArrayList<>();
             row.mColumns = columns;
-            for(int j = 0; j < 8; j++) {
+            for (int j = 0; j < 8; j++) {
                 Column column = new Column();
                 column.text = "test" + i + j + "\ntest" + i + j;
                 columns.add(column);
@@ -71,7 +71,7 @@ public class SurfaceTableActivity extends AppCompatActivity {
         
         mTable.setCellDraw(new TestTextCellDraw());
         // 设置固定宽高
-//        mTable.setCellFactory((row, column) -> new AutoSizeCell(200,100,mRowList.get(row).mColumns.get(column).text));
+        //        mTable.setCellFactory((row, column) -> new AutoSizeCell(200,100,mRowList.get(row).mColumns.get(column).text));
         mTable.setCellFactory((row, column) -> new AutoSizeCell(mRowList.get(row).mColumns.get(column).text));
         mTable.getTableData().setNewData(mRowList.size(), mRowList.get(0).mColumns.size());
     }
@@ -79,13 +79,13 @@ public class SurfaceTableActivity extends AppCompatActivity {
     public void addRow(View view) {
         List<Row> rowList = new ArrayList<>();
         int columnSize = mRowList.get(0).mColumns.size();
-        for(int i = 0; i < 1; i++) {
+        for (int i = 0; i < 1; i++) {
             Row row = new Row();
             rowList.add(row);
             
             List<Column> columns = new ArrayList<>();
             row.mColumns = columns;
-            for(int j = 0; j < columnSize; j++) {
+            for (int j = 0; j < columnSize; j++) {
                 Column column = new Column();
                 column.text = "addRow" + i + j;
                 columns.add(column);
@@ -98,10 +98,10 @@ public class SurfaceTableActivity extends AppCompatActivity {
     }
     
     public void addColumn(View view) {
-        for(int i = 0; i < mRowList.size(); i++) {
+        for (int i = 0; i < mRowList.size(); i++) {
             Row row = mRowList.get(i);
             List<Column> columns = new ArrayList<>();
-            for(int j = 0; j < 1; j++) {
+            for (int j = 0; j < 1; j++) {
                 Column column = new Column();
                 column.text = "addColumn" + i + j;
                 columns.add(column);
@@ -112,18 +112,18 @@ public class SurfaceTableActivity extends AppCompatActivity {
     }
     
     public void deleteColumn(View view) {
-        if(mTable.getTableData().getTotalColumn() < 2) {
+        if (mTable.getTableData().getTotalColumn() < 2) {
             return;
         }
         
-        for(Row row : mRowList) {
+        for (Row row : mRowList) {
             row.mColumns.remove(1);
         }
         mTable.getTableData().deleteColumnRange(1, 2);
     }
     
     public void deleteRow(View view) {
-        if(mTable.getTableData().getTotalRow() < 2) {
+        if (mTable.getTableData().getTotalRow() < 2) {
             return;
         }
         mRowList.remove(1);
@@ -169,7 +169,7 @@ public class SurfaceTableActivity extends AppCompatActivity {
         
         @Override
         public DrawConfig getConfig(int row, int column) {
-            if(column == 0 || row == 0) {
+            if (column == 0 || row == 0) {
                 mDrawConfig.setDrawBackground(true);
                 mDrawConfig.setBackgroundColor(0xFFD3D3D3);
             } else {
@@ -213,9 +213,9 @@ public class SurfaceTableActivity extends AppCompatActivity {
             String data = getData();
             String[] split = data.split("\n");
             float maxWidth = 0;
-            for(String s : split) {
+            for (String s : split) {
                 float v = 60 + textPaint.measureText(s);
-                if(v > maxWidth) {
+                if (v > maxWidth) {
                     maxWidth = v;
                 }
             }

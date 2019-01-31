@@ -1,4 +1,6 @@
 ### 更新日志
+- v1.4
+  > 修复TableConfig 配置mColumnDragIndicatorSize无效Bug
 - v1.3 重大更改
   > * CellFactory获取的对象修改为继承Cell的泛型，相关类都加入泛型对象
   > * 修复删除行列时如果什么都不传导致空指针异常Bug

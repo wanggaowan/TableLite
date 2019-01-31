@@ -180,7 +180,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
      */
     @Override
     public boolean canScrollVertically(int direction) {
-        if(direction < 0) {
+        if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollY() > 0;
         } else {
@@ -196,7 +196,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
      */
     @Override
     public boolean canScrollHorizontally(int direction) {
-        if(direction < 0) {
+        if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollX() > 0;
         } else {
@@ -229,7 +229,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
     
     @Override
     public void setCellFactory(CellFactory<T> cellFactory) {
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
@@ -243,7 +243,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
     
     @Override
     public void setCellDraw(ICellDraw<T> iCellDraw) {
-        if(iCellDraw == null) {
+        if (iCellDraw == null) {
             return;
         }
         
@@ -267,7 +267,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
     
     @Override
     public Rect getShowRect() {
-        if(mOnlyReadShowRect == null) {
+        if (mOnlyReadShowRect == null) {
             mOnlyReadShowRect = new Rect();
         }
         mOnlyReadShowRect.set(mShowRect);

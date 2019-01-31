@@ -146,37 +146,37 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         Logger.e("onSizeChanged");
-        if(mShowRect.width() == w && mShowRect.height() == h) {
+        if (mShowRect.width() == w && mShowRect.height() == h) {
             mFirstInitSurfaceView = false;
             return;
         }
         mShowRect.set(0, 0, w, h);
         mTouchHelper.onScreenSizeChange();
         
-        if(mFirstInitSurfaceView) {
+        if (mFirstInitSurfaceView) {
             mFirstInitSurfaceView = false;
             return;
         }
         
-        if(mOrientation == Configuration.ORIENTATION_UNDEFINED) {
+        if (mOrientation == Configuration.ORIENTATION_UNDEFINED) {
             return;
         }
         
         Looper.myQueue().addIdleHandler(() -> {
             SurfaceView surfaceView;
-            if(mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                 surfaceView = mSurfaceViewMap.get(Configuration.ORIENTATION_PORTRAIT);
             } else {
                 surfaceView = mSurfaceViewMap.get(Configuration.ORIENTATION_LANDSCAPE);
                 
             }
             
-            if(surfaceView != null) {
+            if (surfaceView != null) {
                 removeView(surfaceView);
             }
             
             surfaceView = mSurfaceViewMap.get(mOrientation);
-            if(surfaceView == null) {
+            if (surfaceView == null) {
                 surfaceView = new SurfaceView(getContext());
                 ViewGroup.LayoutParams layoutParams
                     = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -199,15 +199,15 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Logger.e("onConfigurationChanged");
-        if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if(mSurfaceViewMap == null) {
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (mSurfaceViewMap == null) {
                 // 界面初始方向时横屏
                 mSurfaceViewMap = new SparseArray<>(2);
                 mSurfaceViewMap.put(Configuration.ORIENTATION_LANDSCAPE, mSurfaceView);
             }
             mOrientation = Configuration.ORIENTATION_PORTRAIT;
-        } else if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if(mSurfaceViewMap == null) {
+        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (mSurfaceViewMap == null) {
                 // 界面初始方向时竖屏
                 mSurfaceViewMap = new SparseArray<>(2);
                 mSurfaceViewMap.put(Configuration.ORIENTATION_PORTRAIT, mSurfaceView);
@@ -265,7 +265,7 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
      */
     @Override
     public boolean canScrollVertically(int direction) {
-        if(direction < 0) {
+        if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollY() > 0;
         } else {
@@ -281,7 +281,7 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
      */
     @Override
     public boolean canScrollHorizontally(int direction) {
-        if(direction < 0) {
+        if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollX() > 0;
         } else {
@@ -329,7 +329,7 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
     
     @Override
     public void setCellFactory(CellFactory<T> cellFactory) {
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
@@ -343,7 +343,7 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
     
     @Override
     public void setCellDraw(ICellDraw<T> iCellDraw) {
-        if(iCellDraw == null) {
+        if (iCellDraw == null) {
             return;
         }
         
@@ -357,7 +357,7 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
     
     @Override
     public Rect getShowRect() {
-        if(mOnlyReadShowRect == null) {
+        if (mOnlyReadShowRect == null) {
             mOnlyReadShowRect = new Rect();
         }
         mOnlyReadShowRect.set(mShowRect);

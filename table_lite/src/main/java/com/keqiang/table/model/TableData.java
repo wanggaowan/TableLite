@@ -68,12 +68,12 @@ public class TableData<T extends Cell> {
      * @param totalColumn 表格列数
      */
     public void setNewData(final int totalRow, final int totalColumn) {
-        if(totalRow <= 0 || totalColumn <= 0) {
+        if (totalRow <= 0 || totalColumn <= 0) {
             return;
         }
         
         CellFactory cellFactory = table.getCellFactory();
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
@@ -82,13 +82,13 @@ public class TableData<T extends Cell> {
         AsyncExecutor.getInstance().execute(() -> {
             mapCellDataByRow(0, 0, totalRow, totalColumn);
             
-            for(int i = 0; i < totalRow; i++) {
+            for (int i = 0; i < totalRow; i++) {
                 Row row = rows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
             
-            for(int i = 0; i < totalColumn; i++) {
+            for (int i = 0; i < totalColumn; i++) {
                 Column column = columns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
@@ -115,38 +115,38 @@ public class TableData<T extends Cell> {
      *                       否则插入到指定位置
      */
     public void addRowData(final int addRowCount, final int insertPosition) {
-        if(addRowCount <= 0) {
+        if (addRowCount <= 0) {
             return;
         }
         
         CellFactory cellFactory = table.getCellFactory();
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             int preTotalRow = getTotalRow();
             final int position;
-            if(insertPosition < 0) {
+            if (insertPosition < 0) {
                 position = 0;
-            } else if(insertPosition > getTotalRow()) {
+            } else if (insertPosition > getTotalRow()) {
                 position = getTotalRow();
             } else {
                 position = insertPosition;
             }
             mapCellDataByRow(position, preTotalRow, preTotalRow + addRowCount, getTotalColumn());
             
-            for(int i = position; i < position + addRowCount; i++) {
+            for (int i = position; i < position + addRowCount; i++) {
                 Row row = rows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
             
-            for(int i = 0; i < columns.size(); i++) {
+            for (int i = 0; i < columns.size(); i++) {
                 Column column = columns.get(i);
-                if(column.getWidth() != TableConfig.INVALID_VALUE) {
+                if (column.getWidth() != TableConfig.INVALID_VALUE) {
                     int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, table.getTableConfig());
-                    if(actualColumnWidth > column.getWidth()) {
+                    if (actualColumnWidth > column.getWidth()) {
                         column.setWidth(actualColumnWidth);
                     }
                 } else {
@@ -176,23 +176,23 @@ public class TableData<T extends Cell> {
      *                       否则插入到指定位置
      */
     public void addColumnData(final int addColumnCount, final int insertPosition) {
-        if(addColumnCount <= 0) {
+        if (addColumnCount <= 0) {
             return;
         }
         
         CellFactory cellFactory = table.getCellFactory();
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             int preTotalColumn = getTotalColumn();
             final int position;
-            if(insertPosition < 0) {
+            if (insertPosition < 0) {
                 position = 0;
             } else {
                 int totalColumn = getTotalColumn();
-                if(insertPosition > totalColumn) {
+                if (insertPosition > totalColumn) {
                     position = totalColumn;
                 } else {
                     position = insertPosition;
@@ -201,17 +201,17 @@ public class TableData<T extends Cell> {
             
             mapCellDataByColumn(position, preTotalColumn, preTotalColumn + addColumnCount, getTotalRow());
             
-            for(int i = position; i < position + addColumnCount; i++) {
+            for (int i = position; i < position + addColumnCount; i++) {
                 Column column = columns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
             
-            for(int i = 0; i < rows.size(); i++) {
+            for (int i = 0; i < rows.size(); i++) {
                 Row row = rows.get(i);
-                if(row.getHeight() != TableConfig.INVALID_VALUE) {
+                if (row.getHeight() != TableConfig.INVALID_VALUE) {
                     int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, table.getTableConfig());
-                    if(actualRowHeight > row.getHeight()) {
+                    if (actualRowHeight > row.getHeight()) {
                         row.setHeight(actualRowHeight);
                     }
                 } else {
@@ -230,32 +230,32 @@ public class TableData<T extends Cell> {
      * @param positions 行所在位置
      */
     public void deleteRow(int... positions) {
-        if(positions == null || positions.length == 0) {
+        if (positions == null || positions.length == 0) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             List<Row> deleteRows = new ArrayList<>();
-            for(int position : positions) {
-                if(position < 0 || position >= getTotalRow()) {
+            for (int position : positions) {
+                if (position < 0 || position >= getTotalRow()) {
                     continue;
                 }
                 Row<T> row = rows.get(position);
                 deleteRows.add(row);
-                for(int j = 0; j < columns.size(); j++) {
+                for (int j = 0; j < columns.size(); j++) {
                     Cell cell = row.getCells().get(j);
                     columns.get(j).getCells().remove(cell);
                 }
             }
             
-            if(deleteRows.size() == 0) {
+            if (deleteRows.size() == 0) {
                 return;
             }
             
             rows.removeAll(deleteRows);
             
             // 重新统计所有列宽
-            for(int i = 0; i < getTotalColumn(); i++) {
+            for (int i = 0; i < getTotalColumn(); i++) {
                 Column column = columns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
@@ -272,29 +272,29 @@ public class TableData<T extends Cell> {
      *              如果只想删除开始下标位置的数据，可调用{@link #deleteRow(int...)}或end = start + 1
      */
     public void deleteRowRange(final int start, final int end) {
-        if(start < 0 || start >= getTotalRow() || end < start || end > getTotalRow()) {
+        if (start < 0 || start >= getTotalRow() || end < start || end > getTotalRow()) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             List<Row> deleteRows = new ArrayList<>();
-            for(int i = start; i < end; i++) {
+            for (int i = start; i < end; i++) {
                 Row<T> row = rows.get(i);
                 deleteRows.add(row);
-                for(int j = 0; j < columns.size(); j++) {
+                for (int j = 0; j < columns.size(); j++) {
                     Cell cell = row.getCells().get(j);
                     columns.get(j).getCells().remove(cell);
                 }
             }
             
-            if(deleteRows.size() == 0) {
+            if (deleteRows.size() == 0) {
                 return;
             }
             
             rows.removeAll(deleteRows);
             
             // 重新统计所有列宽
-            for(int i = 0; i < getTotalColumn(); i++) {
+            for (int i = 0; i < getTotalColumn(); i++) {
                 Column column = columns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), table.getTableConfig());
                 column.setWidth(actualColumnWidth);
@@ -309,33 +309,33 @@ public class TableData<T extends Cell> {
      * @param positions 列所在位置
      */
     public void deleteColumn(int... positions) {
-        if(positions == null || positions.length == 0) {
+        if (positions == null || positions.length == 0) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             List<Column> deleteColumns = new ArrayList<>();
             int totalColumn = getTotalColumn();
-            for(int position : positions) {
-                if(position < 0 || position >= totalColumn) {
+            for (int position : positions) {
+                if (position < 0 || position >= totalColumn) {
                     continue;
                 }
                 Column<T> column = columns.get(position);
                 deleteColumns.add(column);
-                for(int j = 0; j < rows.size(); j++) {
+                for (int j = 0; j < rows.size(); j++) {
                     Cell cell = column.getCells().get(j);
                     rows.get(j).getCells().remove(cell);
                 }
             }
             
-            if(deleteColumns.size() == 0) {
+            if (deleteColumns.size() == 0) {
                 return;
             }
             
             columns.removeAll(deleteColumns);
             
             // 重新统计所有行高
-            for(int i = 0; i < getTotalRow(); i++) {
+            for (int i = 0; i < getTotalRow(); i++) {
                 Row row = rows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
@@ -352,29 +352,29 @@ public class TableData<T extends Cell> {
      *              如果只想删除开始下标位置的数据，可调用{@link #deleteRow(int...)}或 end = start + 1
      */
     public void deleteColumnRange(int start, int end) {
-        if(start < 0 || start >= getTotalColumn() || end <= start || end > getTotalColumn()) {
+        if (start < 0 || start >= getTotalColumn() || end <= start || end > getTotalColumn()) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             List<Column> deleteColumns = new ArrayList<>();
-            for(int i = start; i < end; i++) {
+            for (int i = start; i < end; i++) {
                 Column<T> column = columns.get(i);
                 deleteColumns.add(column);
-                for(int j = 0; j < rows.size(); j++) {
+                for (int j = 0; j < rows.size(); j++) {
                     Cell cell = column.getCells().get(j);
                     rows.get(j).getCells().remove(cell);
                 }
             }
             
-            if(deleteColumns.size() == 0) {
+            if (deleteColumns.size() == 0) {
                 return;
             }
             
             columns.removeAll(deleteColumns);
             
             // 重新统计所有行高
-            for(int i = 0; i < getTotalRow(); i++) {
+            for (int i = 0; i < getTotalRow(); i++) {
                 Row row = rows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), table.getTableConfig());
                 row.setHeight(actualRowHeight);
@@ -396,13 +396,13 @@ public class TableData<T extends Cell> {
      * @param to   目标位置
      */
     public void swapColumn(int from, int to) {
-        if(from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
+        if (from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             Collections.swap(columns, from, to);
-            for(Row row : rows) {
+            for (Row row : rows) {
                 Collections.swap(row.getCells(), from, to);
             }
             table.asyncReDraw();
@@ -416,13 +416,13 @@ public class TableData<T extends Cell> {
      * @param to   目标位置
      */
     public void swapRow(int from, int to) {
-        if(from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
+        if (from >= getTotalColumn() || from < 0 || to >= getTotalColumn() || to < 0 || from == to) {
             return;
         }
         
         AsyncExecutor.getInstance().execute(() -> {
             Collections.swap(rows, from, to);
-            for(Column column : columns) {
+            for (Column column : columns) {
                 Collections.swap(column.getCells(), from, to);
             }
             table.asyncReDraw();
@@ -439,21 +439,21 @@ public class TableData<T extends Cell> {
      */
     private void mapCellDataByRow(int insertPosition, int rowStart, int totalRow, int totalColumn) {
         CellFactory<T> cellFactory = table.getCellFactory();
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
-        for(int i = rowStart; i < totalRow; i++) {
+        for (int i = rowStart; i < totalRow; i++) {
             Row<T> row = new Row<>();
             List<T> rowCells = new ArrayList<>();
             row.setCells(rowCells);
             
             rows.add(insertPosition, row);
             
-            for(int j = 0; j < totalColumn; j++) {
+            for (int j = 0; j < totalColumn; j++) {
                 T cell = cellFactory.get(insertPosition, j);
                 rowCells.add(cell);
-                if(j >= columns.size()) {
+                if (j >= columns.size()) {
                     Column<T> column = new Column<>();
                     List<T> columnCells = new ArrayList<>();
                     column.setCells(columnCells);
@@ -479,21 +479,21 @@ public class TableData<T extends Cell> {
      */
     private void mapCellDataByColumn(int insertPosition, int columnStart, int totalColumn, int totalRow) {
         CellFactory<T> cellFactory = table.getCellFactory();
-        if(cellFactory == null) {
+        if (cellFactory == null) {
             return;
         }
         
-        for(int i = columnStart; i < totalColumn; i++) {
+        for (int i = columnStart; i < totalColumn; i++) {
             Column<T> column = new Column<>();
             List<T> columnCells = new ArrayList<>();
             column.setCells(columnCells);
             
             columns.add(insertPosition, column);
             
-            for(int j = 0; j < totalRow; j++) {
+            for (int j = 0; j < totalRow; j++) {
                 T cell = cellFactory.get(j, insertPosition);
                 columnCells.add(cell);
-                if(j >= rows.size()) {
+                if (j >= rows.size()) {
                     Row<T> row = new Row<>();
                     List<T> rowCells = new ArrayList<>();
                     row.setCells(rowCells);

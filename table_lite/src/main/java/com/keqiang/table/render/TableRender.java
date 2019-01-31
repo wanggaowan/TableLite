@@ -99,7 +99,7 @@ public class TableRender<T extends Cell> {
         
         int totalRow = tableData.getTotalRow();
         int totalColumn = tableData.getTotalColumn();
-        if(totalRow == 0 || totalColumn == 0 || showRect.width() == 0 || showRect.height() == 0) {
+        if (totalRow == 0 || totalColumn == 0 || showRect.width() == 0 || showRect.height() == 0) {
             return false;
         }
         
@@ -109,13 +109,13 @@ public class TableRender<T extends Cell> {
         
         int fixTopRowHeight = drawRowFixTop(canvas);
         int fixBottomRowHeight = drawRowFixBottom(canvas, fixTopRowHeight);
-        if(fixTopRowHeight + fixBottomRowHeight >= showRect.height()) {
+        if (fixTopRowHeight + fixBottomRowHeight >= showRect.height()) {
             return true;
         }
         
         int fixLeftColumnWidth = drawColumnFixLeft(canvas, fixTopRowHeight, fixBottomRowHeight);
         int fixRightColumnWidth = drawColumnFixRight(canvas, fixTopRowHeight, fixBottomRowHeight, fixLeftColumnWidth);
-        if(fixLeftColumnWidth + fixRightColumnWidth >= showRect.width()) {
+        if (fixLeftColumnWidth + fixRightColumnWidth >= showRect.width()) {
             return true;
         }
         
@@ -127,7 +127,7 @@ public class TableRender<T extends Cell> {
      * @return 表格实际大小
      */
     public Rect getActualSizeRect() {
-        if(mTempActualSizeRect == null) {
+        if (mTempActualSizeRect == null) {
             mTempActualSizeRect = new Rect();
         }
         mTempActualSizeRect.set(mActualSizeRect);
@@ -152,11 +152,11 @@ public class TableRender<T extends Cell> {
         
         int totalRowHeight = 0;
         int totalColumnWidth = 0;
-        for(Row row : rows) {
+        for (Row row : rows) {
             totalRowHeight += row.getHeight();
         }
         
-        for(Column column : columns) {
+        for (Column column : columns) {
             totalColumnWidth += column.getWidth();
         }
         
@@ -179,26 +179,26 @@ public class TableRender<T extends Cell> {
         int top = -mTable.getTouchHelper().getScrollY();
         ICellDraw<T> iCellDraw = mTable.getICellDraw();
         
-        for(int i = 0; i < rows.size(); i++) {
-            if(top >= showRect.height() - fixBottomRowHeight) {
+        for (int i = 0; i < rows.size(); i++) {
+            if (top >= showRect.height() - fixBottomRowHeight) {
                 break;
             }
             
             Row<T> row = rows.get(i);
             
-            if(top + row.getHeight() <= fixTopRowHeight) {
+            if (top + row.getHeight() <= fixTopRowHeight) {
                 top += row.getHeight();
                 continue;
             }
             
             int left = -mTable.getTouchHelper().getScrollX();
-            for(int j = 0; j < columns.size(); j++) {
-                if(left >= showRect.width() - fixRightColumnWidth) {
+            for (int j = 0; j < columns.size(); j++) {
+                if (left >= showRect.width() - fixRightColumnWidth) {
                     break;
                 }
                 
                 Column column = columns.get(j);
-                if(left + column.getWidth() <= fixLeftColumnWidth) {
+                if (left + column.getWidth() <= fixLeftColumnWidth) {
                     left += column.getWidth();
                     continue;
                 }
@@ -209,7 +209,7 @@ public class TableRender<T extends Cell> {
                 canvas.clipRect(mClipRect);
                 
                 mShowCells.add(ShowCell.getInstance(i, j, mClipRect, false, false));
-                if(iCellDraw != null) {
+                if (iCellDraw != null) {
                     iCellDraw.onCellDraw(mTable, canvas, row.getCells().get(j), mClipRect, i, j);
                 }
                 drawMask(canvas, mClipRect, i, j);
@@ -231,21 +231,21 @@ public class TableRender<T extends Cell> {
      */
     protected int drawRowFixTop(Canvas canvas) {
         TableConfig tableConfig = mTable.getTableConfig();
-        if(tableConfig.getRowTopFix().size() == 0
+        if (tableConfig.getRowTopFix().size() == 0
             && !tableConfig.isHighLightSelectColumn()
             && tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE) {
             return 0;
         }
         
         mTempFix.clear();
-        if(tableConfig.getRowTopFix().size() > 0) {
+        if (tableConfig.getRowTopFix().size() > 0) {
             mTempFix.addAll(tableConfig.getRowTopFix());
             Collections.sort(mTempFix, mFixAscComparator);
         }
         
-        if(tableConfig.isHighLightSelectColumn()
+        if (tableConfig.isHighLightSelectColumn()
             || tableConfig.getColumnDragChangeWidthType() != DragChangeSizeType.NONE) {
-            if(!mTempFix.contains(0)) {
+            if (!mTempFix.contains(0)) {
                 mTempFix.add(0, 0);
             }
         }
@@ -257,14 +257,14 @@ public class TableRender<T extends Cell> {
         // 离table顶部的距离
         int preTop = -mTable.getTouchHelper().getScrollY();
         int preStart = 0;
-        for(int i = 0; i < mTempFix.size(); i++) {
+        for (int i = 0; i < mTempFix.size(); i++) {
             Integer tempRowTopFix = mTempFix.get(i);
             
-            for(int j = preStart; j < tempRowTopFix; j++) {
+            for (int j = preStart; j < tempRowTopFix; j++) {
                 preTop += rows.get(j).getHeight();
             }
             
-            if(preTop >= fixTopRowHeight) {
+            if (preTop >= fixTopRowHeight) {
                 // 如果固定行顶部离Table顶部高度比之前已经固定的行高度综总和大，则无需固定
                 break;
             }
@@ -275,7 +275,7 @@ public class TableRender<T extends Cell> {
             
             int fixLeftColumnWidth = drawColumnFixLeftForFixRow(canvas, tempRowTopFix, fixTopRowHeight, bottom);
             int fixRightColumnWidth = drawColumnFixRightForFixRow(canvas, tempRowTopFix, fixTopRowHeight, bottom, fixLeftColumnWidth);
-            if(fixLeftColumnWidth + fixRightColumnWidth >= showWidth) {
+            if (fixLeftColumnWidth + fixRightColumnWidth >= showWidth) {
                 fixTopRowHeight += row.getHeight();
                 continue;
             }
@@ -297,7 +297,7 @@ public class TableRender<T extends Cell> {
         Rect actualSizeRect = mTable.getActualSizeRect();
         TableConfig tableConfig = mTable.getTableConfig();
         
-        if(tableConfig.getRowBottomFix().size() == 0 || actualSizeRect.height() <= showHeight) {
+        if (tableConfig.getRowBottomFix().size() == 0 || actualSizeRect.height() <= showHeight) {
             return 0;
         }
         
@@ -312,14 +312,14 @@ public class TableRender<T extends Cell> {
         // 离table底部的距离
         int preBottom = mTable.getTouchHelper().getScrollY();
         int preStart = rows.size() - 1;
-        for(int i = 0; i < mTempFix.size(); i++) {
+        for (int i = 0; i < mTempFix.size(); i++) {
             Integer tempRowBottomFix = mTempFix.get(i);
             
-            for(int j = preStart; j > tempRowBottomFix; j--) {
+            for (int j = preStart; j > tempRowBottomFix; j--) {
                 preBottom += rows.get(j).getHeight();
             }
             
-            if(actualSizeRect.height() - preBottom <= showHeight
+            if (actualSizeRect.height() - preBottom <= showHeight
                 || showHeight - fixBottomRowHeight <= fixRowTopHeight) {
                 // 如果行底部没有超出屏幕或固定后底部高度比固定在顶部的行的总行高小则无需固定
                 break;
@@ -331,7 +331,7 @@ public class TableRender<T extends Cell> {
             int top = bottom - row.getHeight();
             
             boolean clipRow = false;
-            if(bottom - row.getHeight() < fixRowTopHeight) {
+            if (bottom - row.getHeight() < fixRowTopHeight) {
                 clipRow = true;
                 canvas.save();
                 mClipRect.set(0, fixRowTopHeight, showWidth, bottom);
@@ -340,7 +340,7 @@ public class TableRender<T extends Cell> {
             
             int fixLeftColumnWidth = drawColumnFixLeftForFixRow(canvas, tempRowBottomFix, top, bottom);
             int fixRightColumnWidth = drawColumnFixRightForFixRow(canvas, tempRowBottomFix, top, bottom, fixLeftColumnWidth);
-            if(fixLeftColumnWidth + fixRightColumnWidth >= showWidth) {
+            if (fixLeftColumnWidth + fixRightColumnWidth >= showWidth) {
                 fixBottomRowHeight += row.getHeight();
                 continue;
             }
@@ -348,7 +348,7 @@ public class TableRender<T extends Cell> {
             drawNoneFixCellForFixRow(canvas, tempRowBottomFix, top, bottom, fixLeftColumnWidth, fixRightColumnWidth);
             fixBottomRowHeight += row.getHeight();
             
-            if(clipRow) {
+            if (clipRow) {
                 canvas.restore();
             }
         }
@@ -365,7 +365,7 @@ public class TableRender<T extends Cell> {
         int showHeight = mTable.getShowRect().height();
         TableConfig tableConfig = mTable.getTableConfig();
         
-        if(fixTopRowHeight + fixBottomRowHeight >= showHeight
+        if (fixTopRowHeight + fixBottomRowHeight >= showHeight
             || (tableConfig.getColumnLeftFix().size() == 0
             && !tableConfig.isHighLightSelectRow()
             && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE)) {
@@ -373,14 +373,14 @@ public class TableRender<T extends Cell> {
         }
         
         mTempFix.clear();
-        if(tableConfig.getColumnLeftFix().size() > 0) {
+        if (tableConfig.getColumnLeftFix().size() > 0) {
             mTempFix.addAll(tableConfig.getColumnLeftFix());
             Collections.sort(mTempFix, mFixAscComparator);
         }
         
-        if(tableConfig.isHighLightSelectRow()
+        if (tableConfig.isHighLightSelectRow()
             || tableConfig.getRowDragChangeHeightType() != DragChangeSizeType.NONE) {
-            if(!mTempFix.contains(0)) {
+            if (!mTempFix.contains(0)) {
                 mTempFix.add(0, 0);
             }
         }
@@ -393,14 +393,14 @@ public class TableRender<T extends Cell> {
         // 离table左边的距离
         int preWidth = -mTable.getTouchHelper().getScrollX();
         int preStart = 0;
-        for(int i = 0; i < mTempFix.size(); i++) {
+        for (int i = 0; i < mTempFix.size(); i++) {
             Integer tempColumnLeftFix = mTempFix.get(i);
             
-            for(int j = preStart; j < tempColumnLeftFix; j++) {
+            for (int j = preStart; j < tempColumnLeftFix; j++) {
                 preWidth += columns.get(j).getWidth();
             }
             
-            if(preWidth >= fixLeftColumnWidth) {
+            if (preWidth >= fixLeftColumnWidth) {
                 // 如果固定列左边离Table左边宽度比之前已经固定的列宽度综总和大，则无需固定
                 break;
             }
@@ -414,14 +414,14 @@ public class TableRender<T extends Cell> {
             canvas.clipRect(mClipRect);
             
             int top = -mTable.getTouchHelper().getScrollY();
-            for(int j = 0; j < rows.size(); j++) {
+            for (int j = 0; j < rows.size(); j++) {
                 Row<T> row = rows.get(j);
                 
-                if(top >= showHeight - fixBottomRowHeight) {
+                if (top >= showHeight - fixBottomRowHeight) {
                     break;
                 }
                 
-                if(top + row.getHeight() <= fixTopRowHeight) {
+                if (top + row.getHeight() <= fixTopRowHeight) {
                     top += row.getHeight();
                     continue;
                 }
@@ -431,7 +431,7 @@ public class TableRender<T extends Cell> {
                 canvas.clipRect(mClipRect);
                 
                 mShowCells.add(ShowCell.getInstance(j, tempColumnLeftFix, mClipRect, false, true));
-                if(iCellDraw != null) {
+                if (iCellDraw != null) {
                     iCellDraw.onCellDraw(mTable, canvas, row.getCells().get(tempColumnLeftFix), mClipRect, j, tempColumnLeftFix);
                 }
                 drawMask(canvas, mClipRect, j, tempColumnLeftFix);
@@ -458,7 +458,7 @@ public class TableRender<T extends Cell> {
         int actualWidth = mTable.getActualSizeRect().width();
         TableConfig tableConfig = mTable.getTableConfig();
         
-        if(tableConfig.getColumnRightFix().size() == 0 || actualWidth <= showWidth || fixTopRowHeight + fixBottomRowHeight >= showHeight) {
+        if (tableConfig.getColumnRightFix().size() == 0 || actualWidth <= showWidth || fixTopRowHeight + fixBottomRowHeight >= showHeight) {
             return 0;
         }
         
@@ -474,14 +474,14 @@ public class TableRender<T extends Cell> {
         // 离table右边的距离
         int preRight = mTable.getTouchHelper().getScrollX();
         int preStart = columns.size() - 1;
-        for(int i = 0; i < mTempFix.size(); i++) {
+        for (int i = 0; i < mTempFix.size(); i++) {
             Integer tempColumnRightFix = mTempFix.get(i);
             
-            for(int j = preStart; j > tempColumnRightFix; j--) {
+            for (int j = preStart; j > tempColumnRightFix; j--) {
                 preRight += columns.get(j).getWidth();
             }
             
-            if(actualWidth - preRight <= showWidth
+            if (actualWidth - preRight <= showWidth
                 || showWidth - fixRightColumnWidth <= fixLeftColumnWidth) {
                 // 如果列底左边没有超出屏幕或固定后右边宽度比固定在左边的列的总宽度小则无需固定
                 break;
@@ -497,14 +497,14 @@ public class TableRender<T extends Cell> {
             canvas.clipRect(mClipRect);
             
             int top = -mTable.getTouchHelper().getScrollY();
-            for(int j = 0; j < rows.size(); j++) {
+            for (int j = 0; j < rows.size(); j++) {
                 Row<T> row = rows.get(j);
                 
-                if(top >= showHeight - fixBottomRowHeight) {
+                if (top >= showHeight - fixBottomRowHeight) {
                     break;
                 }
                 
-                if(top + row.getHeight() <= fixTopRowHeight) {
+                if (top + row.getHeight() <= fixTopRowHeight) {
                     top += row.getHeight();
                     continue;
                 }
@@ -514,7 +514,7 @@ public class TableRender<T extends Cell> {
                 canvas.clipRect(mClipRect);
                 
                 mShowCells.add(ShowCell.getInstance(j, tempColumnRightFix, mClipRect, false, true));
-                if(iCellDraw != null) {
+                if (iCellDraw != null) {
                     iCellDraw.onCellDraw(mTable, canvas, row.getCells().get(tempColumnRightFix), mClipRect, j, tempColumnRightFix);
                 }
                 drawMask(canvas, mClipRect, j, tempColumnRightFix);
@@ -540,21 +540,21 @@ public class TableRender<T extends Cell> {
      */
     protected int drawColumnFixLeftForFixRow(Canvas canvas, int fixRow, int top, int bottom) {
         TableConfig tableConfig = mTable.getTableConfig();
-        if(tableConfig.getColumnLeftFix().size() == 0
+        if (tableConfig.getColumnLeftFix().size() == 0
             && !tableConfig.isHighLightSelectRow()
             && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE) {
             return 0;
         }
         
         mTempFix.clear();
-        if(tableConfig.getColumnLeftFix().size() > 0) {
+        if (tableConfig.getColumnLeftFix().size() > 0) {
             mTempFix.addAll(tableConfig.getColumnLeftFix());
             Collections.sort(mTempFix, mFixAscComparator);
         }
         
-        if(tableConfig.isHighLightSelectRow()
+        if (tableConfig.isHighLightSelectRow()
             || tableConfig.getRowDragChangeHeightType() != DragChangeSizeType.NONE) {
-            if(!mTempFix.contains(0)) {
+            if (!mTempFix.contains(0)) {
                 mTempFix.add(0, 0);
             }
         }
@@ -566,14 +566,14 @@ public class TableRender<T extends Cell> {
         // 离table左边的距离
         int preWidth = -mTable.getTouchHelper().getScrollX();
         int preStart = 0;
-        for(int i = 0; i < mTempFix.size(); i++) {
+        for (int i = 0; i < mTempFix.size(); i++) {
             Integer tempColumnLeftFix = mTempFix.get(i);
             
-            for(int j = preStart; j < tempColumnLeftFix; j++) {
+            for (int j = preStart; j < tempColumnLeftFix; j++) {
                 preWidth += columns.get(j).getWidth();
             }
             
-            if(preWidth >= fixLeftColumnWidth) {
+            if (preWidth >= fixLeftColumnWidth) {
                 // 如果固定列左边离Table左边宽度比之前已经固定的列宽度综总和大，则无需固定
                 break;
             }
@@ -587,7 +587,7 @@ public class TableRender<T extends Cell> {
             canvas.clipRect(mClipRect);
             
             mShowCells.add(ShowCell.getInstance(fixRow, tempColumnLeftFix, mClipRect, true, true));
-            if(iCellDraw != null) {
+            if (iCellDraw != null) {
                 iCellDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, tempColumnLeftFix);
             }
             drawMask(canvas, mClipRect, fixRow, tempColumnLeftFix);
@@ -613,7 +613,7 @@ public class TableRender<T extends Cell> {
         int actualWidth = mTable.getActualSizeRect().width();
         TableConfig tableConfig = mTable.getTableConfig();
         
-        if(tableConfig.getColumnRightFix().size() == 0 || actualWidth <= showWidth) {
+        if (tableConfig.getColumnRightFix().size() == 0 || actualWidth <= showWidth) {
             return 0;
         }
         
@@ -628,14 +628,14 @@ public class TableRender<T extends Cell> {
         // 离table右边的距离
         int preRight = mTable.getTouchHelper().getScrollX();
         int preStart = columns.size() - 1;
-        for(int i = 0; i < mTempFix.size(); i++) {
+        for (int i = 0; i < mTempFix.size(); i++) {
             Integer tempColumnRightFix = mTempFix.get(i);
             
-            for(int j = preStart; j > tempColumnRightFix; j--) {
+            for (int j = preStart; j > tempColumnRightFix; j--) {
                 preRight += columns.get(j).getWidth();
             }
             
-            if(actualWidth - preRight <= showWidth
+            if (actualWidth - preRight <= showWidth
                 || showWidth - fixRightColumnWidth <= fixLeftColumnWidth) {
                 // 如果列底左边没有超出屏幕或固定后右边宽度比固定在左边的列的总宽度小则无需固定
                 break;
@@ -651,7 +651,7 @@ public class TableRender<T extends Cell> {
             canvas.clipRect(mClipRect);
             
             mShowCells.add(ShowCell.getInstance(fixRow, tempColumnRightFix, mClipRect, true, true));
-            if(iCellDraw != null) {
+            if (iCellDraw != null) {
                 iCellDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, tempColumnRightFix);
             }
             drawMask(canvas, mClipRect, fixRow, tempColumnRightFix);
@@ -683,13 +683,13 @@ public class TableRender<T extends Cell> {
         ICellDraw<T> iCellDraw = mTable.getICellDraw();
         
         int left = -mTable.getTouchHelper().getScrollX();
-        for(int j = 0; j < columns.size(); j++) {
-            if(left >= showWidth - fixRightColumnWidth) {
+        for (int j = 0; j < columns.size(); j++) {
+            if (left >= showWidth - fixRightColumnWidth) {
                 break;
             }
             
             Column<T> column = columns.get(j);
-            if(left + column.getWidth() <= fixLeftColumnWidth) {
+            if (left + column.getWidth() <= fixLeftColumnWidth) {
                 left += column.getWidth();
                 continue;
             }
@@ -699,7 +699,7 @@ public class TableRender<T extends Cell> {
             canvas.clipRect(mClipRect);
             
             mShowCells.add(ShowCell.getInstance(fixRow, j, mClipRect, true, false));
-            if(iCellDraw != null) {
+            if (iCellDraw != null) {
                 iCellDraw.onCellDraw(mTable, canvas, column.getCells().get(fixRow), mClipRect, fixRow, j);
             }
             drawMask(canvas, mClipRect, fixRow, j);
@@ -716,11 +716,11 @@ public class TableRender<T extends Cell> {
      */
     protected void drawMask(Canvas canvas, Rect drawRect, int row, int column) {
         TouchHelper touchHelper = mTable.getTouchHelper();
-        if(row != touchHelper.getHighLightRowIndex() && column != touchHelper.getHighLightColumnIndex()) {
+        if (row != touchHelper.getHighLightRowIndex() && column != touchHelper.getHighLightColumnIndex()) {
             return;
         }
         
-        if(mMaskPaint == null) {
+        if (mMaskPaint == null) {
             mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mMaskPaint.setStrokeWidth(1);
         }
@@ -730,7 +730,7 @@ public class TableRender<T extends Cell> {
         int alpha = Color.alpha(highLightColor);
         highLightColor -= alpha;
         mMaskPaint.setColor(highLightColor);
-        if(touchHelper.getHighLightRowIndex() == touchHelper.getHighLightColumnIndex() && row == 0 && column == 0) {
+        if (touchHelper.getHighLightRowIndex() == touchHelper.getHighLightColumnIndex() && row == 0 && column == 0) {
             drawRect.inset(1, 1);
             mMaskPaint.setAlpha(255);
             mMaskPaint.setStyle(Paint.Style.STROKE);
@@ -741,13 +741,13 @@ public class TableRender<T extends Cell> {
             canvas.drawRect(drawRect, mMaskPaint);
             
             // 绘制拖拽指示器
-            if(!tableConfig.isEnableDragIndicator()) {
+            if (!tableConfig.isEnableDragIndicator()) {
                 return;
             }
             mMaskPaint.setAlpha(255);
-            if(touchHelper.isDragChangeSize()) {
+            if (touchHelper.isDragChangeSize()) {
                 Resources resources = mTable.getContext().getResources();
-                if(mRowColumnDragBitmap == null) {
+                if (mRowColumnDragBitmap == null) {
                     mRowColumnDragBitmap = BitmapFactory.decodeResource(resources, tableConfig.getFirstRowColumnDragIndicatorRes());
                 }
                 int imageSize = tableConfig.getFirstRowColumnDragIndicatorSize() == TableConfig.INVALID_VALUE ?
@@ -757,11 +757,11 @@ public class TableRender<T extends Cell> {
                 int top = drawRect.top - (tableConfig.getFirstRowColumnDragIndicatorVerticalOffset() == TableConfig.INVALID_VALUE ?
                     resources.getDimensionPixelSize(R.dimen.first_row_column_drag_image_vertical_offset) : tableConfig.getFirstRowColumnDragIndicatorVerticalOffset());
                 drawRect.set(left, top, left + imageSize, top + imageSize);
-                if(!drawRect.isEmpty()) {
+                if (!drawRect.isEmpty()) {
                     canvas.drawBitmap(mRowColumnDragBitmap, null, drawRect, mMaskPaint);
                 }
             }
-        } else if(column == touchHelper.getHighLightColumnIndex()) {
+        } else if (column == touchHelper.getHighLightColumnIndex()) {
             mMaskPaint.setStyle(Paint.Style.FILL);
             mMaskPaint.setAlpha(255);
             canvas.drawLine(drawRect.left, drawRect.top, drawRect.left, drawRect.bottom, mMaskPaint);
@@ -772,26 +772,26 @@ public class TableRender<T extends Cell> {
             canvas.drawRect(drawRect, mMaskPaint);
             
             // 绘制拖拽指示器
-            if(!tableConfig.isEnableDragIndicator()) {
+            if (!tableConfig.isEnableDragIndicator()) {
                 return;
             }
             mMaskPaint.setAlpha(255);
-            if(row == 0 && touchHelper.isDragChangeSize()) {
+            if (row == 0 && touchHelper.isDragChangeSize()) {
                 Resources resources = mTable.getContext().getResources();
-                if(mColumnDragBitmap == null) {
+                if (mColumnDragBitmap == null) {
                     mColumnDragBitmap = BitmapFactory.decodeResource(resources, tableConfig.getColumnDragIndicatorRes());
                 }
-                int imageSize = tableConfig.getRowDragIndicatorSize() == TableConfig.INVALID_VALUE ?
+                int imageSize = tableConfig.getColumnDragIndicatorSize() == TableConfig.INVALID_VALUE ?
                     resources.getDimensionPixelSize(R.dimen.drag_image_size) : tableConfig.getRowDragIndicatorSize();
                 int left = drawRect.left + drawRect.width() / 2 - imageSize / 2;
                 int top = drawRect.top - (tableConfig.getColumnDragIndicatorVerticalOffset() == TableConfig.INVALID_VALUE ?
                     resources.getDimensionPixelSize(R.dimen.column_drag_image_vertical_offset) : tableConfig.getColumnDragIndicatorVerticalOffset());
                 drawRect.set(left, top, left + imageSize, top + imageSize);
-                if(!drawRect.isEmpty()) {
+                if (!drawRect.isEmpty()) {
                     canvas.drawBitmap(mColumnDragBitmap, null, drawRect, mMaskPaint);
                 }
             }
-        } else if(row == touchHelper.getHighLightRowIndex()) {
+        } else if (row == touchHelper.getHighLightRowIndex()) {
             mMaskPaint.setStyle(Paint.Style.FILL);
             mMaskPaint.setAlpha(255);
             canvas.drawLine(drawRect.left, drawRect.top, drawRect.right, drawRect.top, mMaskPaint);
@@ -802,13 +802,13 @@ public class TableRender<T extends Cell> {
             canvas.drawRect(drawRect, mMaskPaint);
             
             // 绘制拖拽指示器
-            if(!tableConfig.isEnableDragIndicator()) {
+            if (!tableConfig.isEnableDragIndicator()) {
                 return;
             }
             mMaskPaint.setAlpha(255);
-            if(column == 0 && touchHelper.isDragChangeSize()) {
+            if (column == 0 && touchHelper.isDragChangeSize()) {
                 Resources resources = mTable.getContext().getResources();
-                if(mRowDragBitmap == null) {
+                if (mRowDragBitmap == null) {
                     mRowDragBitmap = BitmapFactory.decodeResource(resources, tableConfig.getRowDragIndicatorRes());
                 }
                 int imageSize = tableConfig.getRowDragIndicatorSize() == TableConfig.INVALID_VALUE ?
@@ -817,7 +817,7 @@ public class TableRender<T extends Cell> {
                 int left = drawRect.left - (tableConfig.getRowDragIndicatorHorizontalOffset() == TableConfig.INVALID_VALUE
                     ? resources.getDimensionPixelSize(R.dimen.row_drag_image_horizontal_offset) : tableConfig.getRowDragIndicatorHorizontalOffset());
                 drawRect.set(left, top, left + imageSize, top + imageSize);
-                if(!drawRect.isEmpty()) {
+                if (!drawRect.isEmpty()) {
                     canvas.drawBitmap(mRowDragBitmap, null, drawRect, mMaskPaint);
                 }
             }
@@ -828,9 +828,9 @@ public class TableRender<T extends Cell> {
      * 固定行列数据升序排序
      */
     protected Comparator<Integer> mFixAscComparator = (o1, o2) -> {
-        if(o1 < o2) {
+        if (o1 < o2) {
             return -1;
-        } else if(o1.equals(o2)) {
+        } else if (o1.equals(o2)) {
             return 0;
         } else {
             return 1;
@@ -841,9 +841,9 @@ public class TableRender<T extends Cell> {
      * 固定行列数据降序排序
      */
     protected Comparator<Integer> mFixDescComparator = (o1, o2) -> {
-        if(o1 < o2) {
+        if (o1 < o2) {
             return 1;
-        } else if(o1.equals(o2)) {
+        } else if (o1.equals(o2)) {
             return 0;
         } else {
             return -1;
