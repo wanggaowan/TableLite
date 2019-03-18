@@ -120,6 +120,16 @@ public class TouchHelper<T extends Cell> {
     private int mHighLightColumnIndex = TableConfig.INVALID_VALUE;
     
     /**
+     * 需要高亮显示的行
+     */
+    private int mDragRowIndex = TableConfig.INVALID_VALUE;
+    
+    /**
+     * 需要高亮显示的列
+     */
+    private int mDragColumnIndex = TableConfig.INVALID_VALUE;
+    
+    /**
      * 是否触发拖拽改变列宽或行高的动作
      */
     private boolean mDragChangeSize;
@@ -201,9 +211,15 @@ public class TouchHelper<T extends Cell> {
             case MotionEvent.ACTION_UP:
                 if (mDragChangeSize) {
                     mDragChangeSize = false;
+                    if (!mTable.getTableConfig().isNeedRecoveryHighLightOnDragChangeSizeEnded()) {
+                        mHighLightRowIndex = TableConfig.INVALID_VALUE;
+                        mHighLightColumnIndex = TableConfig.INVALID_VALUE;
+                    }
                     notifyViewChanged();
                 }
                 mLongPressDone = false;
+                mDragRowIndex = TableConfig.INVALID_VALUE;
+                mDragColumnIndex = TableConfig.INVALID_VALUE;
                 break;
         }
         return mGestureDetector.onTouchEvent(event);
@@ -242,6 +258,32 @@ public class TouchHelper<T extends Cell> {
      */
     public int getHighLightColumnIndex() {
         return mHighLightColumnIndex;
+    }
+    
+    /**
+     * @return 需要绘制蒙层的行Index
+     */
+    public int getNeedMaskRowIndex() {
+        if (mHighLightRowIndex == TableConfig.INVALID_VALUE && mDragRowIndex == TableConfig.INVALID_VALUE) {
+            return TableConfig.INVALID_VALUE;
+        } else if (mDragRowIndex != TableConfig.INVALID_VALUE) {
+            return mDragRowIndex;
+        } else {
+            return mHighLightRowIndex;
+        }
+    }
+    
+    /**
+     * @return 需要绘制蒙层的列Index
+     */
+    public int getNeedMaskColumnIndex() {
+        if (mHighLightColumnIndex == TableConfig.INVALID_VALUE && mDragColumnIndex == TableConfig.INVALID_VALUE) {
+            return TableConfig.INVALID_VALUE;
+        } else if (mDragColumnIndex != TableConfig.INVALID_VALUE) {
+            return mDragColumnIndex;
+        } else {
+            return mHighLightColumnIndex;
+        }
     }
     
     /**
@@ -517,7 +559,7 @@ public class TouchHelper<T extends Cell> {
         int dragChangeSizeRowIndex;
         int dragChangeSizeColumnIndex;
         
-        if (mClickColumnIndex != 0 || tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE
+        if (mClickColumnIndex != 0 || tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE
             || (mClickRowIndex == 0 && (tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.NONE
             || tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.COLUMN))) {
             dragChangeSizeRowIndex = TableConfig.INVALID_VALUE;
@@ -526,7 +568,7 @@ public class TouchHelper<T extends Cell> {
             dragChangeSizeRowIndex = mClickRowIndex;
         }
         
-        if (mClickRowIndex != 0 || tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE
+        if (mClickRowIndex != 0 || tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE
             || (mClickColumnIndex == 0 && (tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.NONE
             || tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.ROW))) {
             dragChangeSizeColumnIndex = TableConfig.INVALID_VALUE;
@@ -543,8 +585,8 @@ public class TouchHelper<T extends Cell> {
                 }
                 
                 mDragChangeSize = true;
-                mHighLightRowIndex = dragChangeSizeRowIndex;
-                mHighLightColumnIndex = dragChangeSizeColumnIndex;
+                mDragRowIndex = dragChangeSizeRowIndex;
+                mDragColumnIndex = dragChangeSizeColumnIndex;
                 TableData<T> tableData = mTable.getTableData();
                 Row<T> row = tableData.getRows().get(0);
                 Column<T> column = tableData.getColumns().get(0);
@@ -577,8 +619,8 @@ public class TouchHelper<T extends Cell> {
                 }
                 
                 mDragChangeSize = true;
-                mHighLightRowIndex = dragChangeSizeRowIndex;
-                mHighLightColumnIndex = TableConfig.INVALID_VALUE;
+                mDragRowIndex = dragChangeSizeRowIndex;
+                mDragColumnIndex = TableConfig.INVALID_VALUE;
                 TableData<T> tableData = mTable.getTableData();
                 Row<T> row = tableData.getRows().get(dragChangeSizeRowIndex);
                 int height = (int) (row.getHeight() - distanceY);
@@ -601,8 +643,8 @@ public class TouchHelper<T extends Cell> {
                 }
                 
                 mDragChangeSize = true;
-                mHighLightRowIndex = TableConfig.INVALID_VALUE;
-                mHighLightColumnIndex = dragChangeSizeColumnIndex;
+                mDragRowIndex = TableConfig.INVALID_VALUE;
+                mDragColumnIndex = dragChangeSizeColumnIndex;
                 TableData<T> tableData = mTable.getTableData();
                 Column<T> column = tableData.getColumns().get(dragChangeSizeColumnIndex);
                 int width = (int) (column.getWidth() - distanceX);

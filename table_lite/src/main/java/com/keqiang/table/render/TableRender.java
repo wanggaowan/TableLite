@@ -366,9 +366,7 @@ public class TableRender<T extends Cell> {
         TableConfig tableConfig = mTable.getTableConfig();
         
         if (fixTopRowHeight + fixBottomRowHeight >= showHeight
-            || (tableConfig.getColumnLeftFix().size() == 0
-            && !tableConfig.isHighLightSelectRow()
-            && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE)) {
+            || tableConfig.getColumnLeftFix().size() == 0) {
             return 0;
         }
         
@@ -376,13 +374,6 @@ public class TableRender<T extends Cell> {
         if (tableConfig.getColumnLeftFix().size() > 0) {
             mTempFix.addAll(tableConfig.getColumnLeftFix());
             Collections.sort(mTempFix, mFixAscComparator);
-        }
-        
-        if (tableConfig.isHighLightSelectRow()
-            || tableConfig.getRowDragChangeHeightType() != DragChangeSizeType.NONE) {
-            if (!mTempFix.contains(0)) {
-                mTempFix.add(0, 0);
-            }
         }
         
         ICellDraw<T> iCellDraw = mTable.getICellDraw();
@@ -540,9 +531,7 @@ public class TableRender<T extends Cell> {
      */
     protected int drawColumnFixLeftForFixRow(Canvas canvas, int fixRow, int top, int bottom) {
         TableConfig tableConfig = mTable.getTableConfig();
-        if (tableConfig.getColumnLeftFix().size() == 0
-            && !tableConfig.isHighLightSelectRow()
-            && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE) {
+        if (tableConfig.getColumnLeftFix().size() == 0) {
             return 0;
         }
         
@@ -550,13 +539,6 @@ public class TableRender<T extends Cell> {
         if (tableConfig.getColumnLeftFix().size() > 0) {
             mTempFix.addAll(tableConfig.getColumnLeftFix());
             Collections.sort(mTempFix, mFixAscComparator);
-        }
-        
-        if (tableConfig.isHighLightSelectRow()
-            || tableConfig.getRowDragChangeHeightType() != DragChangeSizeType.NONE) {
-            if (!mTempFix.contains(0)) {
-                mTempFix.add(0, 0);
-            }
         }
         
         ICellDraw<T> iCellDraw = mTable.getICellDraw();
@@ -716,7 +698,7 @@ public class TableRender<T extends Cell> {
      */
     protected void drawMask(Canvas canvas, Rect drawRect, int row, int column) {
         TouchHelper touchHelper = mTable.getTouchHelper();
-        if (row != touchHelper.getHighLightRowIndex() && column != touchHelper.getHighLightColumnIndex()) {
+        if (row != touchHelper.getNeedMaskRowIndex() && column != touchHelper.getNeedMaskColumnIndex()) {
             return;
         }
         
@@ -730,7 +712,7 @@ public class TableRender<T extends Cell> {
         int alpha = Color.alpha(highLightColor);
         highLightColor -= alpha;
         mMaskPaint.setColor(highLightColor);
-        if (touchHelper.getHighLightRowIndex() == touchHelper.getHighLightColumnIndex() && row == 0 && column == 0) {
+        if (touchHelper.getNeedMaskRowIndex() == touchHelper.getNeedMaskColumnIndex() && row == 0 && column == 0) {
             drawRect.inset(1, 1);
             mMaskPaint.setAlpha(255);
             mMaskPaint.setStyle(Paint.Style.STROKE);
@@ -761,7 +743,7 @@ public class TableRender<T extends Cell> {
                     canvas.drawBitmap(mRowColumnDragBitmap, null, drawRect, mMaskPaint);
                 }
             }
-        } else if (column == touchHelper.getHighLightColumnIndex()) {
+        } else if (column == touchHelper.getNeedMaskColumnIndex()) {
             mMaskPaint.setStyle(Paint.Style.FILL);
             mMaskPaint.setAlpha(255);
             canvas.drawLine(drawRect.left, drawRect.top, drawRect.left, drawRect.bottom, mMaskPaint);
@@ -791,7 +773,7 @@ public class TableRender<T extends Cell> {
                     canvas.drawBitmap(mColumnDragBitmap, null, drawRect, mMaskPaint);
                 }
             }
-        } else if (row == touchHelper.getHighLightRowIndex()) {
+        } else if (row == touchHelper.getNeedMaskRowIndex()) {
             mMaskPaint.setStyle(Paint.Style.FILL);
             mMaskPaint.setAlpha(255);
             canvas.drawLine(drawRect.left, drawRect.top, drawRect.right, drawRect.top, mMaskPaint);

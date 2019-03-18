@@ -5,6 +5,7 @@ SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现�
 提升性能和效率。
 * [项目github地址](https://github.com/wanggaowan/TableLite)
 * [版本更新日志](/update.md/)
+* [DEMO APK](/app-debug.apk)
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![](https://jitpack.io/v/wanggaowan/TableLite.svg)](https://jitpack.io/#wanggaowan/TableLite)
@@ -23,7 +24,7 @@ SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现�
 2. 增加依赖
    ```groovy
    dependencies {
-   	implementation 'com.github.wanggaowan:TableLite:1.4'
+   	implementation 'com.github.wanggaowan:TableLite:1.5'
    }
    ```
 
@@ -48,10 +49,10 @@ SurfaceTable采用SurfaceView实现界面绘制，因此相比Table，可实现�
  - 全局行高，最大最小行高。
  - 全局列宽，最大最小列宽。
  - 是否需要固定行(顶部或底部)，是否需要固定列(左边或右边)
- - 是否需要行选中高亮，列选中高亮以及高亮颜色(设置为true时自动固定第一列或第一行)
- - 是否需要拖拽改变行高或列宽(三种配置：NONE,不需要,CLICK，点击即可修改,LONG_PRESS，长按后修改)，
-  拖拽时方向指示器图标，指示器大小，是否绘制指示器(当需要拖拽改变行高或列宽设置为不是DragChangeSizeType.NONE
-  时自动固定第一列或第一行)
+ - 是否需要行选中高亮，列选中高亮以及高亮颜色
+ - 是否需要拖拽改变行高或列宽(三种配置：NONE：不需要,CLICK：点击即可修改,LONG_PRESS：长按后修改)，
+  拖拽时方向指示器图标，指示器大小，是否绘制指示器
+ - 拖拽改变行高或列宽结束后是否需要恢复之前高亮内容
 
 **2.TableData(表格数据处理)，功能如下：**
  - 设置新数据

@@ -35,20 +35,19 @@ public class TableActivity extends AppCompatActivity {
         mTable.getTableConfig().addRowFix(0, FixGravity.TOP_ROW);
         mTable.getTableConfig().addRowFix(3, FixGravity.TOP_ROW);
         mTable.getTableConfig().addRowFix(5, FixGravity.TOP_ROW);
-        
+
         mTable.getTableConfig().addColumnFix(0, FixGravity.LEFT_COLUMN);
         mTable.getTableConfig().addColumnFix(3, FixGravity.LEFT_COLUMN);
         mTable.getTableConfig().addColumnFix(5, FixGravity.LEFT_COLUMN);
         
-        mTable.getTableConfig().addRowFix(0, FixGravity.TOP_ROW);
-        mTable.getTableConfig().addColumnFix(0, FixGravity.LEFT_COLUMN);
         mTable.getTableConfig().setHighLightSelectRow(true);
         mTable.getTableConfig().setHighLightSelectColumn(true);
         mTable.getTableConfig().setFirstRowColumnCellHighLightType(FirstRowColumnCellActionType.ROW);
+        mTable.getTableConfig().setNeedRecoveryHighLightOnDragChangeSizeEnded(false);
         
         mTable.getTableConfig().setRowDragChangeHeightType(DragChangeSizeType.LONG_PRESS);
         mTable.getTableConfig().setColumnDragChangeWidthType(DragChangeSizeType.LONG_PRESS);
-        mTable.getTableConfig().setFirstRowColumnCellDragType(FirstRowColumnCellActionType.COLUMN);
+        mTable.getTableConfig().setFirstRowColumnCellDragType(FirstRowColumnCellActionType.BOTH);
         
         
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);

@@ -77,15 +77,13 @@ public class TableConfig {
     
     /**
      * 是否高亮显示选中行，如果为{@code true},
-     * 则默认固定第一列在左边，不管是否调用{@link #addColumnFix(int, int)}，
-     * 只有点击第一列内容才会高亮显示整行
+     * 当且仅当点击第一列内容才会高亮显示整行
      */
     private boolean mHighLightSelectRow;
     
     /**
      * 是否高亮显示选中列，如果为{@code true},
-     * 则默认固定第一行在顶部，不管是否调用{@link #addColumnFix(int, int)}，
-     * 只有点击第一行内容才会高亮显示整列
+     * 且仅当点击第一行内容才会高亮显示整列
      */
     private boolean mHighLightSelectColumn;
     
@@ -101,15 +99,13 @@ public class TableConfig {
     
     /**
      * 拖拽行改变行高类型,如果不为{@link DragChangeSizeType#NONE},
-     * 则默认固定第一列在左边，不管是否调用{@link #addColumnFix(int, int)}，
-     * 只有拖拽第一列单元格才会改变行高，拖拽时高亮显示行
+     * 且仅当拖拽第一列单元格才会改变行高，拖拽时高亮显示行
      */
     private int mRowDragChangeHeightType = DragChangeSizeType.LONG_PRESS;
     
     /**
      * 拖拽列改变列宽类型,如果不为{@link DragChangeSizeType#NONE},
-     * 则默认固定第一行在顶部，不管是否调用{@link #addRowFix(int, int)}，
-     * 只有拖拽第一行单元格才会改变列宽，拖拽时高亮显示列
+     * 且仅当拖拽第一行单元格才会改变列宽，拖拽时高亮显示列
      */
     private int mColumnDragChangeWidthType = DragChangeSizeType.LONG_PRESS;
     
@@ -117,6 +113,11 @@ public class TableConfig {
      * 第一行第一列单元格拖拽时列宽行高处理方式
      */
     private int mFirstRowColumnCellDragType = FirstRowColumnCellActionType.BOTH;
+    
+    /**
+     * 拖拽改变列宽或行高后是否需要恢复之前高亮行或列，如果为{@code false}，则拖拽结束后取消高亮内容,默认值为{@code true}
+     */
+    private boolean mNeedRecoveryHighLightOnDragChangeSizeEnded = true;
     
     /**
      * 拖拽改变行高列宽时是否绘制指示器
@@ -413,8 +414,7 @@ public class TableConfig {
     
     /**
      * 是否高亮显示选中行，如果为{@code true},
-     * 则默认固定第一列在左边，不管是否调用{@link #addColumnFix(int, int)}，
-     * 只有点击第一列内容才会高亮显示整行
+     * 当且仅当点击第一列内容才会高亮显示整行
      */
     public void setHighLightSelectRow(boolean highLightSelectRow) {
         mHighLightSelectRow = highLightSelectRow;
@@ -422,8 +422,7 @@ public class TableConfig {
     
     /**
      * 是否高亮显示选中列，如果为{@code true},
-     * 则默认固定第一行在顶部，不管是否调用{@link #addColumnFix(int, int)}，
-     * 只有点击第一行内容才会高亮显示整列
+     * 当且仅当点击第一行内容才会高亮显示整列
      */
     public void setHighLightSelectColumn(boolean highLightSelectColumn) {
         mHighLightSelectColumn = highLightSelectColumn;
@@ -445,8 +444,7 @@ public class TableConfig {
     
     /**
      * 拖拽行改变行高类型,如果不为{@link DragChangeSizeType#NONE},
-     * 则默认固定第一列在左边，不管是否调用{@link #addColumnFix(int, int)}，
-     * 只有拖拽第一列单元格才会改变行高
+     * 当且仅当拖拽第一列单元格才会改变行高
      */
     public void setRowDragChangeHeightType(@DragChangeSizeType int rowDragChangeHeightType) {
         mRowDragChangeHeightType = rowDragChangeHeightType;
@@ -454,8 +452,7 @@ public class TableConfig {
     
     /**
      * 拖拽列改变列宽类型,如果不为{@link DragChangeSizeType#NONE},
-     * 则默认固定第一行在顶部，不管是否调用{@link #addRowFix(int, int)}，
-     * 只有拖拽第一行单元格才会改变列宽
+     * 当且仅当拖拽第一行单元格才会改变列宽
      */
     public void setColumnDragChangeWidthType(@DragChangeSizeType int columnDragChangeWidthType) {
         mColumnDragChangeWidthType = columnDragChangeWidthType;
@@ -466,6 +463,10 @@ public class TableConfig {
      */
     public void setFirstRowColumnCellDragType(@FirstRowColumnCellActionType int firstRowColumnCellDragType) {
         mFirstRowColumnCellDragType = firstRowColumnCellDragType;
+    }
+    
+    public void setNeedRecoveryHighLightOnDragChangeSizeEnded(boolean needRecoveryHighLightOnDragChangeSizeEnded) {
+        mNeedRecoveryHighLightOnDragChangeSizeEnded = needRecoveryHighLightOnDragChangeSizeEnded;
     }
     
     public boolean isHighLightSelectRow() {
@@ -494,6 +495,10 @@ public class TableConfig {
     
     public int getFirstRowColumnCellDragType() {
         return mFirstRowColumnCellDragType;
+    }
+    
+    public boolean isNeedRecoveryHighLightOnDragChangeSizeEnded() {
+        return mNeedRecoveryHighLightOnDragChangeSizeEnded;
     }
     
     public boolean isEnableDragIndicator() {
