@@ -180,6 +180,10 @@ public class Table<T extends Cell> extends View implements ITable<T> {
      */
     @Override
     public boolean canScrollVertically(int direction) {
+        if (mTouchHelper.isDragChangeSize()) {
+            return true;
+        }
+        
         if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollY() > 0;
@@ -196,6 +200,10 @@ public class Table<T extends Cell> extends View implements ITable<T> {
      */
     @Override
     public boolean canScrollHorizontally(int direction) {
+        if (mTouchHelper.isDragChangeSize()) {
+            return true;
+        }
+        
         if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollX() > 0;

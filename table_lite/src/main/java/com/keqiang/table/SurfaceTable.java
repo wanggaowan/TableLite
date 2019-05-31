@@ -265,6 +265,10 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
      */
     @Override
     public boolean canScrollVertically(int direction) {
+        if (mTouchHelper.isDragChangeSize()) {
+            return true;
+        }
+        
         if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollY() > 0;
@@ -281,6 +285,10 @@ public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<
      */
     @Override
     public boolean canScrollHorizontally(int direction) {
+        if (mTouchHelper.isDragChangeSize()) {
+            return true;
+        }
+        
         if (direction < 0) {
             // 向顶部滑动
             return mTouchHelper.getScrollX() > 0;

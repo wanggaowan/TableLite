@@ -176,7 +176,8 @@ public class TouchHelper<T extends Cell> {
             
             case MotionEvent.ACTION_MOVE:
                 boolean isDisallowIntercept = true;
-                if (mScrollY == 0 || mScrollY >= mTable.getActualSizeRect().height() - mTable.getShowRect().height()) {
+                if (!isDragChangeSize() && (mScrollY == 0
+                    || mScrollY >= mTable.getActualSizeRect().height() - mTable.getShowRect().height())) {
                     isDisallowIntercept = false;
                 }
                 parent.requestDisallowInterceptTouchEvent(isDisallowIntercept);
@@ -264,9 +265,7 @@ public class TouchHelper<T extends Cell> {
      * @return 需要绘制蒙层的行Index
      */
     public int getNeedMaskRowIndex() {
-        if (mHighLightRowIndex == TableConfig.INVALID_VALUE && mDragRowIndex == TableConfig.INVALID_VALUE) {
-            return TableConfig.INVALID_VALUE;
-        } else if (mDragRowIndex != TableConfig.INVALID_VALUE) {
+        if (isDragChangeSize()) {
             return mDragRowIndex;
         } else {
             return mHighLightRowIndex;
@@ -277,9 +276,7 @@ public class TouchHelper<T extends Cell> {
      * @return 需要绘制蒙层的列Index
      */
     public int getNeedMaskColumnIndex() {
-        if (mHighLightColumnIndex == TableConfig.INVALID_VALUE && mDragColumnIndex == TableConfig.INVALID_VALUE) {
-            return TableConfig.INVALID_VALUE;
-        } else if (mDragColumnIndex != TableConfig.INVALID_VALUE) {
+        if (isDragChangeSize()) {
             return mDragColumnIndex;
         } else {
             return mHighLightColumnIndex;

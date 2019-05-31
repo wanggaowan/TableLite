@@ -708,7 +708,7 @@ public class TableRender<T extends Cell> {
         }
         
         TableConfig tableConfig = mTable.getTableConfig();
-        int highLightColor = tableConfig.getHighLightColor();
+        int highLightColor = touchHelper.isDragChangeSize() ? tableConfig.getDragHighLightColor() : tableConfig.getHighLightColor();
         int alpha = Color.alpha(highLightColor);
         highLightColor -= alpha;
         mMaskPaint.setColor(highLightColor);

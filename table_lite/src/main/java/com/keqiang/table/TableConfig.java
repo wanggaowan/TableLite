@@ -95,7 +95,7 @@ public class TableConfig {
     /**
      * 高亮时，覆盖在行或列上的颜色
      */
-    private int mHighLightColor = 0x203A559B; // 蓝色，透明度20
+    private int mHighLightColor = 0x20438CFF; // 蓝色，透明度20
     
     /**
      * 拖拽行改变行高类型,如果不为{@link DragChangeSizeType#NONE},
@@ -120,12 +120,17 @@ public class TableConfig {
     private boolean mNeedRecoveryHighLightOnDragChangeSizeEnded = true;
     
     /**
+     * 拖拽改变行高或列宽时，覆盖在行或列上的颜色，如果不设置透明度，则内容将会被高亮颜色遮挡
+     */
+    private int dragHighLightColor = 0x206BD98D; // 绿色，透明度20
+    
+    /**
      * 拖拽改变行高列宽时是否绘制指示器
      */
     private boolean mEnableDragIndicator = true;
     
     /**
-     * 行改变行高时的指示器，默认为{@link R.drawable#top_bottom}
+     * 行改变行高时的指示器，默认为{@link com.keqiang.table.R.drawable#top_bottom}
      */
     private int mRowDragIndicatorRes = R.drawable.top_bottom;
     
@@ -140,7 +145,7 @@ public class TableConfig {
     private int mRowDragIndicatorHorizontalOffset = INVALID_VALUE;
     
     /**
-     * 列改变列宽时的指示器，默认为{@link R.drawable#left_right}
+     * 列改变列宽时的指示器，默认为{@link com.keqiang.table.R.drawable#left_right}
      */
     private int mColumnDragIndicatorRes = R.drawable.left_right;
     
@@ -155,7 +160,7 @@ public class TableConfig {
     private int mColumnDragIndicatorVerticalOffset = INVALID_VALUE;
     
     /**
-     * 第一行第一列同时改变列宽行高指示器，默认为{@link R.drawable#left_right}
+     * 第一行第一列同时改变列宽行高指示器，默认为{@link com.keqiang.table.R.drawable#left_right}
      */
     private int mFirstRowColumnDragIndicatorRes = R.drawable.diagonal_angle;
     
@@ -469,6 +474,13 @@ public class TableConfig {
         mNeedRecoveryHighLightOnDragChangeSizeEnded = needRecoveryHighLightOnDragChangeSizeEnded;
     }
     
+    /**
+     * @param dragHighLightColor 拖拽改变行高或列宽时，覆盖在行或列上的颜色，如果不设置透明度，则内容将会被高亮颜色遮挡
+     */
+    public void setDragHighLightColor(@ColorInt int dragHighLightColor) {
+        this.dragHighLightColor = dragHighLightColor;
+    }
+    
     public boolean isHighLightSelectRow() {
         return mHighLightSelectRow;
     }
@@ -501,6 +513,10 @@ public class TableConfig {
         return mNeedRecoveryHighLightOnDragChangeSizeEnded;
     }
     
+    public int getDragHighLightColor() {
+        return dragHighLightColor;
+    }
+    
     public boolean isEnableDragIndicator() {
         return mEnableDragIndicator;
     }
@@ -517,7 +533,7 @@ public class TableConfig {
     }
     
     /**
-     * @param rowDragIndicatorRes 行改变行高时的指示器图片资源Id，默认为{@link R.drawable#top_bottom},绘制位置垂直居中
+     * @param rowDragIndicatorRes 行改变行高时的指示器图片资源Id，默认为{@link com.keqiang.table.R.drawable#top_bottom},绘制位置垂直居中
      */
     public void setRowDragIndicatorRes(@DrawableRes int rowDragIndicatorRes) {
         mRowDragIndicatorRes = rowDragIndicatorRes;
@@ -529,7 +545,7 @@ public class TableConfig {
     
     /**
      * @param rowDragIndicatorSize 行改变行高时的指示器绘制大小，
-     *                             如果为{@link #INVALID_VALUE}，则取{@link R.dimen#drag_image_size}
+     *                             如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#drag_image_size}
      */
     public void setRowDragIndicatorSize(int rowDragIndicatorSize) {
         mRowDragIndicatorSize = rowDragIndicatorSize;
@@ -541,7 +557,7 @@ public class TableConfig {
     
     /**
      * @param rowDragIndicatorHorizontalOffset 行高指示器离单元格左侧的偏移值，
-     *                                         如果为{@link #INVALID_VALUE}，则取{@link R.dimen#row_drag_image_horizontal_offset}
+     *                                         如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#row_drag_image_horizontal_offset}
      */
     public void setRowDragIndicatorHorizontalOffset(int rowDragIndicatorHorizontalOffset) {
         mRowDragIndicatorHorizontalOffset = rowDragIndicatorHorizontalOffset;
@@ -552,7 +568,7 @@ public class TableConfig {
     }
     
     /**
-     * @param columnDragIndicatorRes 列改变列宽时的指示器图片资源Id，默认为{@link R.drawable#left_right}，绘制位置水平居中
+     * @param columnDragIndicatorRes 列改变列宽时的指示器图片资源Id，默认为{@link com.keqiang.table.R.drawable#left_right}，绘制位置水平居中
      */
     public void setColumnDragIndicatorRes(@DrawableRes int columnDragIndicatorRes) {
         mColumnDragIndicatorRes = columnDragIndicatorRes;
@@ -564,7 +580,7 @@ public class TableConfig {
     
     /**
      * @param columnDragIndicatorSize 列改变列宽时的指示器绘制大小，
-     *                                如果为{@link #INVALID_VALUE}，则取{@link R.dimen#drag_image_size}
+     *                                如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#drag_image_size}
      */
     public void setColumnDragIndicatorSize(int columnDragIndicatorSize) {
         mColumnDragIndicatorSize = columnDragIndicatorSize;
@@ -576,7 +592,7 @@ public class TableConfig {
     
     /**
      * @param columnDragIndicatorVerticalOffset 列宽指示器离单元格顶部的偏移值,
-     *                                          如果为{@link #INVALID_VALUE}，则取{@link R.dimen#column_drag_image_vertical_offset}
+     *                                          如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#column_drag_image_vertical_offset}
      */
     public void setColumnDragIndicatorVerticalOffset(int columnDragIndicatorVerticalOffset) {
         mColumnDragIndicatorVerticalOffset = columnDragIndicatorVerticalOffset;
@@ -587,7 +603,7 @@ public class TableConfig {
     }
     
     /**
-     * @param firstRowColumnDragIndicatorRes 第一行第一列同时改变列宽行高指示器图片资源Id，默认为{@link R.drawable#left_right}，绘制位置左上角
+     * @param firstRowColumnDragIndicatorRes 第一行第一列同时改变列宽行高指示器图片资源Id，默认为{@link com.keqiang.table.R.drawable#left_right}，绘制位置左上角
      */
     public void setFirstRowColumnDragIndicatorRes(int firstRowColumnDragIndicatorRes) {
         mFirstRowColumnDragIndicatorRes = firstRowColumnDragIndicatorRes;
@@ -599,7 +615,7 @@ public class TableConfig {
     
     /**
      * @param firstRowColumnDragIndicatorSize 第一行第一列同时改变列宽行高指示器大小，
-     *                                        如果为{@link #INVALID_VALUE}，则取{@link R.dimen#drag_image_size}
+     *                                        如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#drag_image_size}
      */
     public void setFirstRowColumnDragIndicatorSize(int firstRowColumnDragIndicatorSize) {
         mFirstRowColumnDragIndicatorSize = firstRowColumnDragIndicatorSize;
@@ -611,7 +627,7 @@ public class TableConfig {
     
     /**
      * @param firstRowColumnDragIndicatorVerticalOffset 第一行第一列同时改变列宽行高指示器离单元格顶部的偏移值,
-     *                                                  如果为{@link #INVALID_VALUE}，则取{@link R.dimen#first_row_column_drag_image_vertical_offset}
+     *                                                  如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#first_row_column_drag_image_vertical_offset}
      */
     public void setFirstRowColumnDragIndicatorVerticalOffset(int firstRowColumnDragIndicatorVerticalOffset) {
         mFirstRowColumnDragIndicatorVerticalOffset = firstRowColumnDragIndicatorVerticalOffset;
@@ -623,7 +639,7 @@ public class TableConfig {
     
     /**
      * @param firstRowColumnDragIndicatorHorizontalOffset 第一行第一列同时改变列宽行高指示器离单元格左边的偏移值,
-     *                                                    如果为{@link #INVALID_VALUE}，则取{@link R.dimen#first_row_column_drag_image_horizontal_offset}
+     *                                                    如果为{@link #INVALID_VALUE}，则取{@link com.keqiang.table.R.dimen#first_row_column_drag_image_horizontal_offset}
      */
     public void setFirstRowColumnDragIndicatorHorizontalOffset(int firstRowColumnDragIndicatorHorizontalOffset) {
         mFirstRowColumnDragIndicatorHorizontalOffset = firstRowColumnDragIndicatorHorizontalOffset;
