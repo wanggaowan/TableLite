@@ -24,8 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 /**
- * 实现表格的绘制。如果有单元格经常变更，但整体几乎不变的需求，
- * 请使用{@link SurfaceTable},该表格有当前表格的所有功能且可以实现局部单元格刷新<br/>
+ * 实现表格的绘制<br/>
  * 主要类说明：
  * <ul>
  * <li>{@link TableConfig}用于配置一些基础的表格数据</li>

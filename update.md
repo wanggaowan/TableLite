@@ -1,4 +1,8 @@
 ### 更新日志
+- v1.7
+  > * 修复多线程数据同步问题
+  > * 暂停SurfaceTable使用，关键问题未解决
+
 - v1.6
   > * TableConfig新增dragHighLightColor属性配置，当拖拽改变行高或列宽时高亮显示行或列
   > * 修复拖拽改变行高或列宽时滑动冲突Bug

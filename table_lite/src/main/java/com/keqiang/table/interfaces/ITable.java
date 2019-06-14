@@ -2,6 +2,7 @@ package com.keqiang.table.interfaces;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.view.View;
 
 import com.keqiang.table.TableConfig;
 import com.keqiang.table.TouchHelper;
@@ -81,4 +82,14 @@ public interface ITable<T extends Cell> {
      * 通知同步重绘，必须在UI线程调用
      */
     void syncReDraw();
+    
+    /**
+     * Table绑定到Window与解绑监听
+     */
+    void addOnAttachStateChangeListener(View.OnAttachStateChangeListener listener);
+    
+    /**
+     * 将事件发送到Table所在线程
+     */
+    boolean post(Runnable action);
 }

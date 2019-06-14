@@ -26,6 +26,8 @@ import com.keqiang.table.util.Logger;
 import java.util.List;
 
 /**
+ * 暂不提供使用，目前还未解决层级问题，如果xml中使用该表格，将始终浮在最上层
+ *
  * 实现表格的绘制,可实现局部单元格刷新，这对于表格有网络照片需要显示时在性能上有很大提升。<br/>
  * 主要类说明：
  * <ul>
@@ -38,7 +40,7 @@ import java.util.List;
  *
  * @author Created by 汪高皖 on 2019/1/18 0018 10:27
  */
-public class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<T> {
+class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<T> {
     /**
      * 屏幕上可展示的区域
      */
