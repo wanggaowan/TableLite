@@ -359,22 +359,36 @@ public class TouchHelper<T extends Cell> {
                 int highLightRowIndex;
                 int highLightColumnIndex;
                 
-                if (mClickColumnIndex != 0 || !tableConfig.isHighLightSelectColumn()
+                if (!tableConfig.isHighLightSelectRow() || mClickColumnIndex != 0
                     || (mClickRowIndex == 0 && (tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.NONE
                     || tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.COLUMN))) {
+                    // 不需要高亮选中行或点击的不是第一列或点击的是第一行第一列，但是第一行第一列单元格不高亮选中行
                     highLightRowIndex = TableConfig.INVALID_VALUE;
                 } else {
                     // 点击第一列内容表示行需要高亮，记录高亮行位置
                     highLightRowIndex = mClickRowIndex;
                 }
                 
-                if (mClickRowIndex != 0 || !tableConfig.isHighLightSelectRow()
+                if (!tableConfig.isHighLightSelectColumn() || mClickRowIndex != 0
                     || (mClickColumnIndex == 0 && (tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.NONE
                     || tableConfig.getFirstRowColumnCellHighLightType() == FirstRowColumnCellActionType.ROW))) {
+                    // 不需要高亮选中列或点击的不是第一行或点击的是第一行第一列，但是第一行第一列单元格不高亮选中列
                     highLightColumnIndex = TableConfig.INVALID_VALUE;
                 } else {
                     // 点击第一行内容表示列需要高亮，记录高亮列位置
                     highLightColumnIndex = mClickColumnIndex;
+                }
+                
+                if (tableConfig.isBothHighLightRowAndColumn() && (mClickRowIndex == 0 || mClickColumnIndex == 0)) {
+                    if (highLightRowIndex == TableConfig.INVALID_VALUE
+                        && mHighLightRowIndex != TableConfig.INVALID_VALUE) {
+                        highLightRowIndex = mHighLightRowIndex;
+                    }
+                    
+                    if (highLightColumnIndex == TableConfig.INVALID_VALUE
+                        && mHighLightColumnIndex != TableConfig.INVALID_VALUE) {
+                        highLightColumnIndex = mHighLightColumnIndex;
+                    }
                 }
                 
                 if (highLightRowIndex != mHighLightRowIndex || highLightColumnIndex != mHighLightColumnIndex) {
@@ -556,18 +570,20 @@ public class TouchHelper<T extends Cell> {
         int dragChangeSizeRowIndex;
         int dragChangeSizeColumnIndex;
         
-        if (mClickColumnIndex != 0 || tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE
+        if (tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.NONE || mClickColumnIndex != 0
             || (mClickRowIndex == 0 && (tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.NONE
             || tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.COLUMN))) {
+            // 不需要拖拽改变行高，或点击的不是第一列或点击的是第一行第一列，但是第一行第一列单元格不需要拖拽改变行高
             dragChangeSizeRowIndex = TableConfig.INVALID_VALUE;
         } else {
             // 点击第一列内容表示行需要高亮，记录高亮行位置
             dragChangeSizeRowIndex = mClickRowIndex;
         }
         
-        if (mClickRowIndex != 0 || tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE
+        if (tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.NONE || mClickRowIndex != 0
             || (mClickColumnIndex == 0 && (tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.NONE
             || tableConfig.getFirstRowColumnCellDragType() == FirstRowColumnCellActionType.ROW))) {
+            // 不需要拖拽改变列宽，或点击的不是第一行或点击的是第一行第一列，但是第一行第一列单元格不需要拖拽改变列宽
             dragChangeSizeColumnIndex = TableConfig.INVALID_VALUE;
         } else {
             // 点击第一行内容表示列需要高亮，记录高亮列位置

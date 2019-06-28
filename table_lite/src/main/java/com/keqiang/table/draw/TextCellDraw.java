@@ -121,7 +121,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             }
             
             canvas.save();
-            canvas.translate(drawRect.left, drawRect.right);
+            canvas.translate(drawRect.left, drawRect.top);
             staticLayout.draw(canvas);
             canvas.restore();
             return;

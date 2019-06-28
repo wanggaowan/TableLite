@@ -30,7 +30,7 @@ public class TableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_table);
         mTable = findViewById(R.id.table);
         
-        //        mTable.getTableConfig().setColumnWidth(200);
+        // mTable.getTableConfig().setColumnWidth(200);
         mTable.getTableConfig().setRowHeight(100);
         mTable.getTableConfig().addRowFix(0, FixGravity.TOP_ROW);
         mTable.getTableConfig().addRowFix(3, FixGravity.TOP_ROW);
@@ -42,6 +42,7 @@ public class TableActivity extends AppCompatActivity {
         
         mTable.getTableConfig().setHighLightSelectRow(true);
         mTable.getTableConfig().setHighLightSelectColumn(true);
+        mTable.getTableConfig().setBothHighLightRowAndColumn(true);
         mTable.getTableConfig().setFirstRowColumnCellHighLightType(FirstRowColumnCellActionType.ROW);
         mTable.getTableConfig().setNeedRecoveryHighLightOnDragChangeSizeEnded(false);
         

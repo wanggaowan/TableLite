@@ -88,6 +88,11 @@ public class TableConfig {
     private boolean mHighLightSelectColumn;
     
     /**
+     * 当用户点击第一行或第一列时，是否同时高亮选中的行和列
+     */
+    private boolean mBothHighLightRowAndColumn;
+    
+    /**
      * 第一行第一列单元格点击时高亮处理方式
      */
     private int mFirstRowColumnCellHighLightType = FirstRowColumnCellActionType.BOTH;
@@ -434,6 +439,15 @@ public class TableConfig {
     }
     
     /**
+     * 当用户点击第一行或第一列时，是否同时高亮选中的行和列。
+     * 前提是{@link #setHighLightSelectRow(boolean)}和
+     * {@link #setHighLightSelectColumn(boolean)}均为true
+     */
+    public void setBothHighLightRowAndColumn(boolean bothHighLightRowAndColumn) {
+        mBothHighLightRowAndColumn = bothHighLightRowAndColumn;
+    }
+    
+    /**
      * 第一行第一列单元格点击时高亮处理方式,取值参考{@link FirstRowColumnCellActionType}
      */
     public void setFirstRowColumnCellHighLightType(@FirstRowColumnCellActionType int firstRowColumnCellHighLightType) {
@@ -487,6 +501,10 @@ public class TableConfig {
     
     public boolean isHighLightSelectColumn() {
         return mHighLightSelectColumn;
+    }
+    
+    public boolean isBothHighLightRowAndColumn() {
+        return mBothHighLightRowAndColumn;
     }
     
     public int getFirstRowColumnCellHighLightType() {

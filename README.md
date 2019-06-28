@@ -23,7 +23,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
 2. 增加依赖
    ```groovy
    dependencies {
-        implementation 'com.github.wanggaowan:TableLite:1.7'
+        implementation 'com.github.wanggaowan:TableLite:1.8'
    }
    ```
 
@@ -33,8 +33,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
         android:id="@+id/table"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:background="@android:color/white"/>
+        android:layout_margin="10dp"/>
    ```
 
 #### 下面对Table中主要的类进行说明：
@@ -42,7 +41,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
  - 全局行高，最大最小行高。
  - 全局列宽，最大最小列宽。
  - 是否需要固定行(顶部或底部)，是否需要固定列(左边或右边)
- - 是否需要行选中高亮，列选中高亮以及高亮颜色
+ - 是否需要行选中高亮，列选中高亮、行高都选中高亮以及高亮颜色
  - 是否需要拖拽改变行高或列宽(三种配置：NONE：不需要,CLICK：点击即可修改,LONG_PRESS：长按后修改)以及拖拽时高亮颜色，
   拖拽时方向指示器图标，指示器大小，是否绘制指示器
  - 拖拽改变行高或列宽结束后是否需要恢复之前高亮内容
@@ -65,7 +64,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
 模型转换成特定对象才可以使用。**
 
 **5.ICellDraw(接口)，用于处理单元格绘制逻辑，目前只提供了一种实现：TextCellDraw，
-该实现主要目的是作为一种绘制Demo，建议根据自己的需求实现自定义IDraw**
+该实现主要目的是作为一种绘制Demo，建议根据自己的需求实现自定义ICellDraw**
 
 
 #### Proguard

@@ -13,6 +13,7 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.keqiang.table.interfaces.CellClickListener;
 import com.keqiang.table.interfaces.CellFactory;
 import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
@@ -416,5 +417,33 @@ class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<T> {
      */
     public void syncReDrawCell(int row, int column, Object data) {
         mTableRender.reDrawCell(row, column, data);
+    }
+    
+    /**
+     * 设置新数据(异步操作，可在任何线程调用)，数据处理完成后会主动调用界面刷新操作。
+     * 调用此方法之前，请确保{@link ITable#getCellFactory()}不为null，否则将不做任何处理。
+     * 更多数据处理方法，请调用{@link #getTableData()}获取{@link TableData}
+     *
+     * @param totalRow    表格行数
+     * @param totalColumn 表格列数
+     */
+    public void  setNewData(int totalRow, int totalColumn) {
+        mTableData.setNewData(totalRow, totalColumn);
+    }
+    
+    /**
+     * 清除表格数据，异步操作，数据处理完成后会主动调用界面刷新操作。
+     * 更多数据处理方法，请调用{@link #getTableData()}获取{@link TableData}
+     */
+    public void clearData() {
+        mTableData.clear();
+    }
+    
+    /**
+     * 设置单元格点击监听。
+     * 更多数据处理方法，请调用{@link #getTouchHelper()} 获取{@link TouchHelper}
+     */
+    public void setCellClickListener(CellClickListener listener) {
+        mTouchHelper.setCellClickListener(listener);
     }
 }
