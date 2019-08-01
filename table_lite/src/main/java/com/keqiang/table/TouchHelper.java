@@ -248,6 +248,33 @@ public class TouchHelper<T extends Cell> {
     }
     
     /**
+     * 设置X轴滑动距离
+     */
+    public void setScrollX(int scrollX) {
+        scrollTo(scrollX, mScrollY);
+    }
+    
+    /**
+     * 设置Y轴滑动距离
+     */
+    public void setScrollY(int scrollY) {
+        scrollTo(mScrollX, scrollY);
+    }
+    
+    /**
+     * 设置X轴、Y轴滑动距离
+     */
+    public void scrollTo(int x, int y) {
+        int oX = mScrollX;
+        int oY = mScrollY;
+        mScrollX = x;
+        mScrollY = y;
+        if (judgeNeedUpdateTable(oX, oY)) {
+            notifyViewChanged();
+        }
+    }
+    
+    /**
      * @return 需要高亮显示的行
      */
     public int getHighLightRowIndex() {

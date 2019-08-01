@@ -235,6 +235,39 @@ public class Table<T extends Cell> extends View implements ITable<T> {
         AsyncExecutor.getInstance().shutdown();
     }
     
+    /**
+     * 禁止外部调用,这会导致绘制位置异常。
+     * 有关获取和设置滑动的ScrollY值，可通过{@link TouchHelper}操作，
+     * 不在此方法调用{@link TouchHelper}对应方法，还是防止一些第三库，
+     * 比如SmartRefreshLayout调用此方法，导致滑动到用户不希望滑动的位置
+     */
+    @Override
+    public void setScrollY(int value) {
+        // super.setScrollY(value);
+    }
+    
+    /**
+     * 禁止外部调用,这会导致绘制位置异常。
+     * 有关获取和设置滑动的ScrollX值，可通过{@link TouchHelper}操作，
+     * 不在此方法调用{@link TouchHelper}对应方法，还是防止一些第三库，
+     * 比如SmartRefreshLayout调用此方法，导致滑动到用户不希望滑动的位置
+     */
+    @Override
+    public void setScrollX(int value) {
+        // super.setScrollX(value);
+    }
+    
+    /**
+     * 禁止外部调用,这会导致绘制位置异常。
+     * 有关获取和设置滑动的ScrollX值、ScrollY值，可通过{@link TouchHelper}操作，
+     * 不在此方法调用{@link TouchHelper}对应方法，还是防止一些第三库，
+     * 比如SmartRefreshLayout调用此方法，导致滑动到用户不希望滑动的位置
+     */
+    @Override
+    public void scrollTo(int x, int y) {
+        // super.scrollTo(x, y);
+    }
+    
     @Override
     public void setCellFactory(CellFactory<T> cellFactory) {
         if (cellFactory == null) {
@@ -315,7 +348,7 @@ public class Table<T extends Cell> extends View implements ITable<T> {
      * @param totalRow    表格行数
      * @param totalColumn 表格列数
      */
-    public void  setNewData(int totalRow, int totalColumn) {
+    public void setNewData(int totalRow, int totalColumn) {
         mTableData.setNewData(totalRow, totalColumn);
     }
     

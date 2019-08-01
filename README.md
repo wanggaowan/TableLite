@@ -23,7 +23,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
 2. 增加依赖
    ```groovy
    dependencies {
-        implementation 'com.github.wanggaowan:TableLite:1.8'
+        implementation 'com.github.wanggaowan:TableLite:1.9'
    }
    ```
 
@@ -32,8 +32,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
    <com.keqiang.table.Table
         android:id="@+id/table"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"/>
+        android:layout_height="match_parent"/>
    ```
 
 #### 下面对Table中主要的类进行说明：
@@ -58,6 +57,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
  - 设置单元格点击监听
  - 设置Fling手势滑动速率，滑动方向（横向，纵向或双向）以及表格实际大小相较于
  显示区域大小的多少倍时才处理Fling手势
+ - 滑动表格到指定位置
 
 **4.CellFactory(接口)，用于动态获取单元格(Cell)数据，Cell用于设置单元格宽高
 以及如果要自适应宽高时实现测量宽高值逻辑，另外将数据源绑定到Cell，这样就无需接口
