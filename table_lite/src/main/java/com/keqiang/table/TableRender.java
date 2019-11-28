@@ -112,7 +112,7 @@ public class TableRender<T extends Cell> {
         if (showRect.height() >= mActualSizeRect.height()) {
             mTable.getTouchHelper().justSetScrollY(0);
         } else if (showRect.height() + mTable.getTouchHelper().getScrollY() >= mActualSizeRect.height()) {
-            mTable.getTouchHelper().justSetScrollY(mActualSizeRect.width() - showRect.width());
+            mTable.getTouchHelper().justSetScrollY(mActualSizeRect.height() - showRect.height());
         }
         
         int fixTopRowHeight = drawRowFixTop(canvas);

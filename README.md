@@ -23,7 +23,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
 2. 增加依赖
    ```groovy
    dependencies {
-        implementation 'com.github.wanggaowan:TableLite:1.10'
+        implementation 'com.github.wanggaowan:TableLite:1.11'
    }
    ```
 
