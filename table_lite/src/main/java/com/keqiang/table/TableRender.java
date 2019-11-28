@@ -1,4 +1,4 @@
-package com.keqiang.table.render;
+package com.keqiang.table;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,9 +8,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import com.keqiang.table.R;
-import com.keqiang.table.TableConfig;
-import com.keqiang.table.TouchHelper;
+import androidx.annotation.NonNull;
+
 import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.model.Cell;
@@ -24,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 /**
  * 确定单元格位置，固定行列逻辑
@@ -106,6 +103,17 @@ public class TableRender<T extends Cell> {
         ShowCell.recycleInstances(mShowCells);
         mShowCells.clear();
         statisticsTableActualSize();
+        if (showRect.width() >= mActualSizeRect.width()) {
+            mTable.getTouchHelper().justSetScrollX(0);
+        } else if (showRect.width() + mTable.getTouchHelper().getScrollX() >= mActualSizeRect.width()) {
+            mTable.getTouchHelper().justSetScrollX(mActualSizeRect.width() - showRect.width());
+        }
+    
+        if (showRect.height() >= mActualSizeRect.height()) {
+            mTable.getTouchHelper().justSetScrollY(0);
+        } else if (showRect.height() + mTable.getTouchHelper().getScrollY() >= mActualSizeRect.height()) {
+            mTable.getTouchHelper().justSetScrollY(mActualSizeRect.width() - showRect.width());
+        }
         
         int fixTopRowHeight = drawRowFixTop(canvas);
         int fixBottomRowHeight = drawRowFixBottom(canvas, fixTopRowHeight);

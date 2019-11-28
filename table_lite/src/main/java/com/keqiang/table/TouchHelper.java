@@ -14,6 +14,8 @@ import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
+import androidx.annotation.NonNull;
+
 import com.keqiang.table.interfaces.CellClickListener;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.model.Cell;
@@ -25,8 +27,6 @@ import com.keqiang.table.model.ShowCell;
 import com.keqiang.table.model.TableData;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 /**
  * 处理点击，移动，快速滑动逻辑
@@ -161,7 +161,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * 处理事件分发
      */
-    public boolean dispatchTouchEvent(View view, MotionEvent event) {
+    boolean dispatchTouchEvent(View view, MotionEvent event) {
         ViewParent parent = view.getParent();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -194,9 +194,9 @@ public class TouchHelper<T extends Cell> {
     }
     
     /**
-     * 处理触摸时间
+     * 处理触摸事件
      */
-    public boolean onTouchEvent(MotionEvent event) {
+    boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 if (mLongPressDone) {
@@ -229,7 +229,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * 屏幕宽高发送变化
      */
-    public void onScreenSizeChange() {
+    void onScreenSizeChange() {
         judgeNeedUpdateTable(mScrollX, mScrollY);
     }
     
@@ -255,10 +255,24 @@ public class TouchHelper<T extends Cell> {
     }
     
     /**
+     * 设置X轴滑动距离,但仅仅是赋值，不辅助滑动到指定位置
+     */
+    void justSetScrollX(int scrollX) {
+       mScrollX = scrollX;
+    }
+    
+    /**
      * 设置Y轴滑动距离
      */
     public void setScrollY(int scrollY) {
         scrollTo(mScrollX, scrollY);
+    }
+    
+    /**
+     * 设置Y轴滑动距离,但仅仅是赋值，不辅助滑动到指定位置
+     */
+    void justSetScrollY(int scrollY) {
+        mScrollY = scrollY;
     }
     
     /**
@@ -291,7 +305,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * @return 需要绘制蒙层的行Index
      */
-    public int getNeedMaskRowIndex() {
+    int getNeedMaskRowIndex() {
         if (isDragChangeSize()) {
             return mDragRowIndex;
         } else {
@@ -302,7 +316,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * @return 需要绘制蒙层的列Index
      */
-    public int getNeedMaskColumnIndex() {
+    int getNeedMaskColumnIndex() {
         if (isDragChangeSize()) {
             return mDragColumnIndex;
         } else {
@@ -313,7 +327,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * @return {@code true}触发拖拽改变列宽或行高的动作
      */
-    public boolean isDragChangeSize() {
+    boolean isDragChangeSize() {
         return mDragChangeSize;
     }
     

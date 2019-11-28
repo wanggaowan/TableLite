@@ -1,4 +1,4 @@
-package com.keqiang.table.render;
+package com.keqiang.table;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -6,6 +6,8 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import androidx.annotation.NonNull;
 
 import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
@@ -16,8 +18,6 @@ import com.keqiang.table.model.ShowCell;
 import com.keqiang.table.util.Utils;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 /**
  * 确定单元格位置，固定行列逻辑

@@ -7,6 +7,8 @@ import android.text.TextPaint;
 import android.view.Gravity;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.keqiang.table.Table;
 import com.keqiang.table.draw.TextCellDraw;
 import com.keqiang.table.model.Cell;
@@ -16,8 +18,6 @@ import com.keqiang.table.model.FixGravity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 public class TableActivity extends AppCompatActivity {
     private Table<Cell> mTable;
@@ -35,7 +35,7 @@ public class TableActivity extends AppCompatActivity {
         mTable.getTableConfig().addRowFix(0, FixGravity.TOP_ROW);
         mTable.getTableConfig().addRowFix(3, FixGravity.TOP_ROW);
         mTable.getTableConfig().addRowFix(5, FixGravity.TOP_ROW);
-
+        
         mTable.getTableConfig().addColumnFix(0, FixGravity.LEFT_COLUMN);
         mTable.getTableConfig().addColumnFix(3, FixGravity.LEFT_COLUMN);
         mTable.getTableConfig().addColumnFix(5, FixGravity.LEFT_COLUMN);
@@ -50,24 +50,9 @@ public class TableActivity extends AppCompatActivity {
         mTable.getTableConfig().setColumnDragChangeWidthType(DragChangeSizeType.LONG_PRESS);
         mTable.getTableConfig().setFirstRowColumnCellDragType(FirstRowColumnCellActionType.BOTH);
         
-        
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(30);
         mTextPaint.setColor(Color.BLACK);
-        
-        mRowList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            Row row = new Row();
-            mRowList.add(row);
-            
-            List<Column> columns = new ArrayList<>();
-            row.mColumns = columns;
-            for (int j = 0; j < 10; j++) {
-                Column column = new Column();
-                column.text = "test" + i + j;
-                columns.add(column);
-            }
-        }
         
         mTable.setCellDraw(new TestTextCellDraw());
         mTable.setCellFactory((row, column) -> new Cell(mRowList.get(row).mColumns.get(column).text) {
@@ -77,7 +62,25 @@ public class TableActivity extends AppCompatActivity {
             }
         });
         
-        mTable.getTableData().setNewData(30, 10);
+        setNewData(30, 10);
+    }
+    
+    private void setNewData(int rowSize, int columnSize) {
+        mRowList = new ArrayList<>();
+        for (int i = 0; i < rowSize; i++) {
+            Row row = new Row();
+            mRowList.add(row);
+            
+            List<Column> columns = new ArrayList<>();
+            row.mColumns = columns;
+            for (int j = 0; j < columnSize; j++) {
+                Column column = new Column();
+                column.text = "test" + i + j;
+                columns.add(column);
+            }
+        }
+        
+        mTable.getTableData().setNewData(rowSize, columnSize);
     }
     
     public void addRow(View view) {

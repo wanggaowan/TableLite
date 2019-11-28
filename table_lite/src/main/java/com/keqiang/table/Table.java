@@ -9,6 +9,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
 import com.keqiang.table.interfaces.CellClickListener;
 import com.keqiang.table.interfaces.CellFactory;
 import com.keqiang.table.interfaces.ICellDraw;
@@ -16,13 +19,9 @@ import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.ShowCell;
 import com.keqiang.table.model.TableData;
-import com.keqiang.table.render.TableRender;
 import com.keqiang.table.util.AsyncExecutor;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 /**
  * 实现表格的绘制<br/>
