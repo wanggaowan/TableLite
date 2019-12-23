@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.keqiang.table.interfaces.CellClickListener;
+import com.keqiang.table.interfaces.CellDragChangeListener;
 import com.keqiang.table.interfaces.CellFactory;
 import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
@@ -477,5 +478,13 @@ class SurfaceTable<T extends Cell> extends FrameLayout implements ITable<T> {
      */
     public void setCellClickListener(CellClickListener listener) {
         mTouchHelper.setCellClickListener(listener);
+    }
+    
+    /**
+     * 设置单元格点击监听。
+     * 更多数据处理方法，请调用{@link #getTouchHelper()} 获取{@link TouchHelper}
+     */
+    public void setCellClickListener(CellDragChangeListener listener) {
+        mTouchHelper.setCellDragChangeListener(listener);
     }
 }

@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.keqiang.table.interfaces.CellClickListener;
+import com.keqiang.table.interfaces.CellDragChangeListener;
 import com.keqiang.table.interfaces.CellFactory;
 import com.keqiang.table.interfaces.ICellDraw;
 import com.keqiang.table.interfaces.ITable;
@@ -365,5 +366,13 @@ public class Table<T extends Cell> extends View implements ITable<T> {
      */
     public void setCellClickListener(CellClickListener listener) {
         mTouchHelper.setCellClickListener(listener);
+    }
+    
+    /**
+     * 设置单元格点击监听。
+     * 更多数据处理方法，请调用{@link #getTouchHelper()} 获取{@link TouchHelper}
+     */
+    public void setCellClickListener(CellDragChangeListener listener) {
+        mTouchHelper.setCellDragChangeListener(listener);
     }
 }

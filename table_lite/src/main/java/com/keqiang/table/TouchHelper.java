@@ -17,6 +17,7 @@ import android.widget.Scroller;
 import androidx.annotation.NonNull;
 
 import com.keqiang.table.interfaces.CellClickListener;
+import com.keqiang.table.interfaces.CellDragChangeListener;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.Column;
@@ -98,6 +99,11 @@ public class TouchHelper<T extends Cell> {
      * 单元格点击监听
      */
     private CellClickListener mCellClickListener;
+    
+    /**
+     * 单元格拖拽监听
+     */
+    private CellDragChangeListener mCellDragChangeListener;
     
     /**
      * 点击处单元格所在行
@@ -258,7 +264,7 @@ public class TouchHelper<T extends Cell> {
      * 设置X轴滑动距离,但仅仅是赋值，不辅助滑动到指定位置
      */
     void justSetScrollX(int scrollX) {
-       mScrollX = scrollX;
+        mScrollX = scrollX;
     }
     
     /**
@@ -361,6 +367,13 @@ public class TouchHelper<T extends Cell> {
      */
     public void setCellClickListener(CellClickListener cellClickListener) {
         mCellClickListener = cellClickListener;
+    }
+    
+    /**
+     * 单元格拖拽监听
+     */
+    public void setCellDragChangeListener(CellDragChangeListener cellDragChangeListener) {
+        mCellDragChangeListener = cellDragChangeListener;
     }
     
     /**
@@ -667,6 +680,10 @@ public class TouchHelper<T extends Cell> {
                 } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
+                
+                if (mCellDragChangeListener != null) {
+                    mCellDragChangeListener.onDragChange(mDragRowIndex, mDragColumnIndex);
+                }
             } else if (dragChangeSizeRowIndex != TableConfig.INVALID_VALUE) {
                 if (!mLongPressDone && tableConfig.getRowDragChangeHeightType() == DragChangeSizeType.LONG_PRESS) {
                     return false;
@@ -691,6 +708,10 @@ public class TouchHelper<T extends Cell> {
                 } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
+    
+                if (mCellDragChangeListener != null) {
+                    mCellDragChangeListener.onDragChange(mDragRowIndex, mDragColumnIndex);
+                }
             } else {
                 if (!mLongPressDone && tableConfig.getColumnDragChangeWidthType() == DragChangeSizeType.LONG_PRESS) {
                     return false;
@@ -714,6 +735,10 @@ public class TouchHelper<T extends Cell> {
                     notifyViewChanged();
                 } else if (mustNotifyViewChange) {
                     notifyViewChanged();
+                }
+    
+                if (mCellDragChangeListener != null) {
+                    mCellDragChangeListener.onDragChange(mDragRowIndex, mDragColumnIndex);
                 }
             }
             return true;
