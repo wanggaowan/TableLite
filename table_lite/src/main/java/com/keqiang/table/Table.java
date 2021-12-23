@@ -30,7 +30,8 @@ import java.util.List;
  * <ul>
  * <li>{@link TableConfig}用于配置一些基础的表格数据</li>
  * <li>{@link TableData}用于指定表格行列数，增删行列，清除数据，记录单元格数据，用于绘制时提供每个单元格位置和大小</li>
- * <li>{@link TouchHelper}用于处理点击，移动，快速滑动逻辑以及设置相关参数</li>
+ * <li>{@link TouchHelper}用于处理点击，移动，快速滑动逻辑以及设置相关参数,获取表格滑动距离请用此类，
+ * 不要使用Table的{@link Table#getScrollX()}或{@link Table#getScrollY()}</li>
  * <li>{@link CellFactory}用于提供单元格数据，指定固定宽高或自适应时测量宽高</li>
  * <li>{@link ICellDraw}用于绘制整个表格背景和单元格内容</li>
  * </ul>
@@ -369,10 +370,17 @@ public class Table<T extends Cell> extends View implements ITable<T> {
     }
     
     /**
-     * 设置单元格点击监听。
+     * 设置单元格拖拽监听。
      * 更多数据处理方法，请调用{@link #getTouchHelper()} 获取{@link TouchHelper}
      */
-    public void setCellClickListener(CellDragChangeListener listener) {
+    public void setCellDragChangeListener(CellDragChangeListener listener) {
         mTouchHelper.setCellDragChangeListener(listener);
+    }
+    
+    /**
+     * 设置表格滑动监听
+     */
+    public void setTableScrollChangeListener(com.keqiang.table.interfaces.OnScrollChangeListener listener) {
+        mTouchHelper.setOnScrollChangeListener(listener);
     }
 }

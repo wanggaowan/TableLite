@@ -17,9 +17,4 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TableActivity.class);
         startActivity(intent);
     }
-    
-    public void goSurfaceTableActivity(View view) {
-        Intent intent = new Intent(this, SurfaceTableActivity.class);
-        startActivity(intent);
-    }
 }

@@ -1,8 +1,6 @@
 # TableLite
 Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowan/TableLiteKotlin)
 
-**说明**：SurfaceTable现不提供使用，如果需要使用，可自行下载源码并对外开放，目前SurfaceTable无法解决始终绘制在最顶层问题，这样对于多层（z轴）布局（比如刷新：SwipeRefreshLayout）下嵌套SurfaceTable，会导致刷新界面被SurfaceTable遮挡问题。如果需求没有多层（z轴）嵌套，则使用没有问题
-
 * [项目github地址](https://github.com/wanggaowan/TableLite)
 * [版本更新日志](/update.md/)
 * [DEMO APK](/app-debug.apk)
@@ -56,6 +54,7 @@ Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowa
 **3.TouchHelper(表格触摸处理)，可配置项如下：**
  - 设置单元格点击监听
  - 设置单元格拖拽监听
+- 设置表格滑动监听
  - 设置Fling手势滑动速率，滑动方向（横向，纵向或双向）以及表格实际大小相较于
  显示区域大小的多少倍时才处理Fling手势
  - 滑动表格到指定位置

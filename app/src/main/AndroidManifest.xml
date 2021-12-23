@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.wgw.table.demo"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.wgw.table.demo">
 
     <application
         android:allowBackup="true"
@@ -9,19 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.wgw.table.demo.MainActivity">
+        <activity
+            android:name="com.wgw.table.demo.MainActivity"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.wgw.table.demo.TableActivity"
-            android:configChanges="screenSize|keyboard|orientation"/>
-        <activity
-            android:name="com.wgw.table.demo.SurfaceTableActivity"
-            android:configChanges="screenSize|keyboard|orientation"/>
+            android:configChanges="screenSize|keyboard|orientation" />
     </application>
 
 </manifest>

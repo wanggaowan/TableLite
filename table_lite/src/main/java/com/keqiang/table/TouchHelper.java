@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -14,11 +15,10 @@ import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
-import androidx.annotation.NonNull;
-
 import com.keqiang.table.interfaces.CellClickListener;
 import com.keqiang.table.interfaces.CellDragChangeListener;
 import com.keqiang.table.interfaces.ITable;
+import com.keqiang.table.interfaces.OnScrollChangeListener;
 import com.keqiang.table.model.Cell;
 import com.keqiang.table.model.Column;
 import com.keqiang.table.model.DragChangeSizeType;
@@ -29,6 +29,8 @@ import com.keqiang.table.model.TableData;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+
 /**
  * 处理点击，移动，快速滑动逻辑
  *
@@ -38,7 +40,7 @@ import java.util.List;
 public class TouchHelper<T extends Cell> {
     private static final String TAG = TouchHelper.class.getSimpleName();
     
-    private ITable<T> mTable;
+    private final ITable<T> mTable;
     
     /**
      * 水平滑动时滑出部分离控件左边的距离
@@ -63,12 +65,12 @@ public class TouchHelper<T extends Cell> {
     /**
      * 处理手势滑动
      */
-    private GestureDetector mGestureDetector;
+    private final GestureDetector mGestureDetector;
     
     /**
      * 最小滑动速度
      */
-    private int mMinimumFlingVelocity;
+    private final int mMinimumFlingVelocity;
     
     /**
      * 表格实际大小是可显示区域大小的几倍时才开启快速滑动,范围[1,∞)
@@ -88,7 +90,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * 用来处理fling
      */
-    private Scroller mScroller;
+    private final Scroller mScroller;
     
     /**
      * 当前是否快速滚动中
@@ -104,6 +106,8 @@ public class TouchHelper<T extends Cell> {
      * 单元格拖拽监听
      */
     private CellDragChangeListener mCellDragChangeListener;
+    
+    private OnScrollChangeListener mOnScrollChangeListener;
     
     /**
      * 点击处单元格所在行
@@ -149,10 +153,14 @@ public class TouchHelper<T extends Cell> {
     private float longPressY = 0;
     
     // 用于处理快速滑动
-    private Point mStartPoint = new Point(0, 0);
-    private Point mEndPoint = new Point();
-    private TimeInterpolator mInterpolator;
-    private PointEvaluator mEvaluator;
+    private final Point mStartPoint = new Point(0, 0);
+    private final Point mEndPoint = new Point();
+    private final TimeInterpolator mInterpolator;
+    private final PointEvaluator mEvaluator;
+    
+    private View mTouchView;
+    private float mDownX;
+    private float mDownY;
     
     public TouchHelper(@NonNull ITable<T> table) {
         mTable = table;
@@ -168,26 +176,60 @@ public class TouchHelper<T extends Cell> {
      * 处理事件分发
      */
     boolean dispatchTouchEvent(View view, MotionEvent event) {
+        mTouchView = view;
         ViewParent parent = view.getParent();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //ACTION_DOWN的时候，赶紧把事件hold住
-                if (mTable.getShowRect().contains((int) event.getX(), (int) event.getY())) {
-                    //判断是否落在图表内容区中
-                    parent.requestDisallowInterceptTouchEvent(true);
-                } else {
-                    parent.requestDisallowInterceptTouchEvent(false);
-                }
+                mDownX = event.getRawX();
+                mDownY = event.getRawY();
+                // 判断是否落在图表内容区中
+                boolean contains = mTable.getShowRect().contains((int) event.getX(), (int) event.getY());
+                parent.requestDisallowInterceptTouchEvent(contains);
                 return true;
             
             case MotionEvent.ACTION_MOVE:
                 boolean isDisallowIntercept = true;
-                if (!isDragChangeSize() && (mScrollY == 0
-                    || mScrollY >= mTable.getActualSizeRect().height() - mTable.getShowRect().height())) {
-                    isDisallowIntercept = false;
+                float distanceX = mDownX - event.getRawX();
+                float distanceY = mDownY - event.getRawY();
+                mDownX = event.getRawX();
+                mDownY = event.getRawY();
+                if (!isDragChangeSize()) {
+                    if (Math.abs(distanceX) > Math.abs(distanceY)) {
+                        // 水平滑动
+                        if (distanceX < 0) {
+                            // 向右滑动
+                            if (mScrollX == 0) {
+                                isDisallowIntercept = false;
+                            }
+                        } else {
+                            // 向左滑动
+                            if (mScrollX >= mTable.getActualSizeRect().width() - mTable.getShowRect().width()) {
+                                isDisallowIntercept = false;
+                            }
+                        }
+                    } else if (Math.abs(distanceX) < Math.abs(distanceY)) {
+                        // 垂直滑动
+                        if (distanceY < 0) {
+                            // 向上滑动
+                            if (mScrollY == 0) {
+                                isDisallowIntercept = false;
+                            }
+                        } else {
+                            // 向下滑动
+                            if (mScrollY >= mTable.getActualSizeRect().height() - mTable.getShowRect().height()) {
+                                isDisallowIntercept = false;
+                            }
+                        }
+                    }
                 }
                 parent.requestDisallowInterceptTouchEvent(isDisallowIntercept);
                 if (isDisallowIntercept) {
+                    // 此处回调，是防止请求了上层不要拦截，但是还是被拦截，导致onTouchEvent无法执行，
+                    // 此时可在此方法中，做一些禁止上层拦截后续事件的逻辑
+                    if (mOnScrollChangeListener != null) {
+                        mOnScrollChangeListener.onScroll(mTouchView, 0, 0);
+                    }
                     return true;
                 }
                 break;
@@ -377,6 +419,13 @@ public class TouchHelper<T extends Cell> {
     }
     
     /**
+     * 设置表格滑动监听
+     */
+    public void setOnScrollChangeListener(OnScrollChangeListener onScrollChangeListener) {
+        mOnScrollChangeListener = onScrollChangeListener;
+    }
+    
+    /**
      * 通知表格刷新
      */
     private void notifyViewChanged() {
@@ -387,7 +436,7 @@ public class TouchHelper<T extends Cell> {
      * 处理点击和移动
      */
     @SuppressWarnings("FieldCanBeLocal")
-    private GestureDetector.SimpleOnGestureListener mClickAndMoveGestureListener = new GestureDetector.SimpleOnGestureListener() {
+    private final GestureDetector.SimpleOnGestureListener mClickAndMoveGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
             mFling = false;
@@ -470,6 +519,9 @@ public class TouchHelper<T extends Cell> {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             boolean dispose = dragChangeSize(distanceX, distanceY, false);
             if (dispose) {
+                if (mOnScrollChangeListener != null) {
+                    mOnScrollChangeListener.onScroll(mTouchView, distanceX, distanceY);
+                }
                 return true;
             }
             
@@ -485,6 +537,9 @@ public class TouchHelper<T extends Cell> {
             mScrollY += distanceY;
             if (judgeNeedUpdateTable(originalX, originalY)) {
                 notifyViewChanged();
+                if (mOnScrollChangeListener != null) {
+                    mOnScrollChangeListener.onScroll(mTouchView, distanceX, distanceY);
+                }
                 return true;
             } else {
                 return false;
@@ -590,6 +645,9 @@ public class TouchHelper<T extends Cell> {
                 mScrollY = mTempScrollY - point.y;
                 if (judgeNeedUpdateTable(originalX, originalY)) {
                     notifyViewChanged();
+                    if (mOnScrollChangeListener != null) {
+                        mOnScrollChangeListener.onScroll(mTouchView, mScrollX - originalX, mScrollY - originalY);
+                    }
                 }
                 
                 // 以下判断依据了judgeNeedUpdateTable的结果，
@@ -610,7 +668,7 @@ public class TouchHelper<T extends Cell> {
             }
         });
         int duration = (int) (Math.max(scrollX, scrollY) * mFlingRate) / 2;
-        valueAnimator.setDuration(duration > 300 ? 300 : duration);
+        valueAnimator.setDuration(Math.min(duration, 300));
         valueAnimator.start();
     }
     
@@ -708,7 +766,7 @@ public class TouchHelper<T extends Cell> {
                 } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
-    
+                
                 if (mCellDragChangeListener != null) {
                     mCellDragChangeListener.onDragChange(mDragRowIndex, mDragColumnIndex);
                 }
@@ -736,7 +794,7 @@ public class TouchHelper<T extends Cell> {
                 } else if (mustNotifyViewChange) {
                     notifyViewChanged();
                 }
-    
+                
                 if (mCellDragChangeListener != null) {
                     mCellDragChangeListener.onDragChange(mDragRowIndex, mDragColumnIndex);
                 }
@@ -749,15 +807,13 @@ public class TouchHelper<T extends Cell> {
     /**
      * 移动点估值器
      */
-    public static class PointEvaluator implements TypeEvaluator {
-        private Point point = new Point();
+    public static class PointEvaluator implements TypeEvaluator<Point> {
+        private final Point point = new Point();
         
         @Override
-        public Object evaluate(float fraction, Object startValue, Object endValue) {
-            Point startPoint = (Point) startValue;
-            Point endPoint = (Point) endValue;
-            int x = (int) (startPoint.x + fraction * (endPoint.x - startPoint.x));
-            int y = (int) (startPoint.y + fraction * (endPoint.y - startPoint.y));
+        public Point evaluate(float fraction, Point startValue, Point endValue) {
+            int x = (int) (startValue.x + fraction * (endValue.x - startValue.x));
+            int y = (int) (startValue.y + fraction * (endValue.y - startValue.y));
             point.set(x, y);
             return point;
         }
