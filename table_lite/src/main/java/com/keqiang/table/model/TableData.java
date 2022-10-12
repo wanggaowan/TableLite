@@ -1,5 +1,6 @@
 package com.keqiang.table.model;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Build;
@@ -33,7 +34,7 @@ import androidx.annotation.NonNull;
 public class TableData<T extends Cell> {
     private static final String TAG = TableData.class.getSimpleName();
     
-    private ITable<T> mTable;
+    private final ITable<T> mTable;
     
     /**
      * 表格行数据，并不一定在改变后就立马同步显示到界面。在调用{@link #setNewData(int, int)}等改变行数据的方法时，
@@ -84,6 +85,11 @@ public class TableData<T extends Cell> {
     }
     
     private void createHandlerThread() {
+        if (mTable.isInEditMode()) {
+            // 预览模式下不进行初始化
+            return;
+        }
+        
         if (mHandlerThread != null && mHandlerThread.isAlive()) {
             Logger.d(TAG, "handlerThread isAlive");
             return;
@@ -94,24 +100,28 @@ public class TableData<T extends Cell> {
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper());
         try {
+            //noinspection JavaReflectionMemberAccess
+            @SuppressLint("DiscouragedPrivateApi")
             Field field = Looper.class.getDeclaredField("mQueue");
             field.setAccessible(true);
             MessageQueue queue = (MessageQueue) field.get(mHandlerThread.getLooper());
-            queue.addIdleHandler(() -> {
-                Logger.d(TAG, "call queueIdle");
-                // 用此方法来达到极短时间内数据发生变更，界面无需每次变更都去绘制，而是在最后一次数据变更结束后刷新一次的效果
-                mTable.post(() -> {
-                    mRowsFinal.clear();
-                    mColumnsFinal.clear();
-                    mRowsFinal.addAll(mRows);
-                    mColumnsFinal.addAll(mColumns);
-                    mTable.syncReDraw();
-                    if (mListener != null) {
-                        mListener.onFinish();
-                    }
+            if (queue != null) {
+                queue.addIdleHandler(() -> {
+                    Logger.d(TAG, "call queueIdle");
+                    // 用此方法来达到极短时间内数据发生变更，界面无需每次变更都去绘制，而是在最后一次数据变更结束后刷新一次的效果
+                    mTable.post(() -> {
+                        mRowsFinal.clear();
+                        mColumnsFinal.clear();
+                        mRowsFinal.addAll(mRows);
+                        mColumnsFinal.addAll(mColumns);
+                        mTable.syncReDraw();
+                        if (mListener != null) {
+                            mListener.onFinish();
+                        }
+                    });
+                    return true;
                 });
-                return true;
-            });
+            }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -195,7 +205,7 @@ public class TableData<T extends Cell> {
             return;
         }
         
-        CellFactory cellFactory = mTable.getCellFactory();
+        CellFactory<T> cellFactory = mTable.getCellFactory();
         if (cellFactory == null) {
             return;
         }
@@ -210,13 +220,13 @@ public class TableData<T extends Cell> {
             mapCellDataByRow(0, 0, totalRow, totalColumn);
             
             for (int i = 0; i < totalRow; i++) {
-                Row row = mRows.get(i);
+                Row<T> row = mRows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
             
             for (int i = 0; i < totalColumn; i++) {
-                Column column = mColumns.get(i);
+                Column<T> column = mColumns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
@@ -247,7 +257,7 @@ public class TableData<T extends Cell> {
             return;
         }
         
-        CellFactory cellFactory = mTable.getCellFactory();
+        CellFactory<T> cellFactory = mTable.getCellFactory();
         if (cellFactory == null) {
             return;
         }
@@ -261,28 +271,26 @@ public class TableData<T extends Cell> {
             final int position;
             if (insertPosition < 0) {
                 position = 0;
-            } else if (insertPosition > preTotalRow) {
-                position = preTotalRow;
             } else {
-                position = insertPosition;
+                position = Math.min(insertPosition, preTotalRow);
             }
+            
             mapCellDataByRow(position, preTotalRow, preTotalRow + addRowCount, getTotalColumn());
             
             for (int i = position; i < position + addRowCount; i++) {
-                Row row = mRows.get(i);
+                Row<T> row = mRows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
             
             for (int i = 0; i < mColumns.size(); i++) {
-                Column column = mColumns.get(i);
+                Column<T> column = mColumns.get(i);
+                int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, mTable.getTableConfig());
                 if (column.getWidth() != TableConfig.INVALID_VALUE) {
-                    int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, mTable.getTableConfig());
                     if (actualColumnWidth > column.getWidth()) {
                         column.setWidth(actualColumnWidth);
                     }
                 } else {
-                    int actualColumnWidth = Utils.getActualColumnWidth(column, position, position + addRowCount, mTable.getTableConfig());
                     column.setWidth(actualColumnWidth);
                 }
             }
@@ -313,7 +321,7 @@ public class TableData<T extends Cell> {
             return;
         }
         
-        CellFactory cellFactory = mTable.getCellFactory();
+        CellFactory<T> cellFactory = mTable.getCellFactory();
         if (cellFactory == null) {
             return;
         }
@@ -327,29 +335,26 @@ public class TableData<T extends Cell> {
             final int position;
             if (insertPosition < 0) {
                 position = 0;
-            } else if (insertPosition > preTotalColumn) {
-                position = preTotalColumn;
             } else {
-                position = insertPosition;
+                position = Math.min(insertPosition, preTotalColumn);
             }
             
             mapCellDataByColumn(position, preTotalColumn, preTotalColumn + addColumnCount, getTotalRow());
             
             for (int i = position; i < position + addColumnCount; i++) {
-                Column column = mColumns.get(i);
+                Column<T> column = mColumns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
             
             for (int i = 0; i < mRows.size(); i++) {
-                Row row = mRows.get(i);
+                Row<T> row = mRows.get(i);
+                int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, mTable.getTableConfig());
                 if (row.getHeight() != TableConfig.INVALID_VALUE) {
-                    int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, mTable.getTableConfig());
                     if (actualRowHeight > row.getHeight()) {
                         row.setHeight(actualRowHeight);
                     }
                 } else {
-                    int actualRowHeight = Utils.getActualRowHeight(row, position, position + addColumnCount, mTable.getTableConfig());
                     row.setHeight(actualRowHeight);
                 }
             }
@@ -373,7 +378,7 @@ public class TableData<T extends Cell> {
         }
         
         mHandler.post(() -> {
-            List<Row> deleteRows = new ArrayList<>();
+            List<Row<T>> deleteRows = new ArrayList<>();
             for (int position : positions) {
                 if (position < 0 || position >= getTotalRow()) {
                     continue;
@@ -381,7 +386,7 @@ public class TableData<T extends Cell> {
                 Row<T> row = mRows.get(position);
                 deleteRows.add(row);
                 for (int j = 0; j < mColumns.size(); j++) {
-                    Cell cell = row.getCells().get(j);
+                    T cell = row.getCells().get(j);
                     mColumns.get(j).getCells().remove(cell);
                 }
             }
@@ -394,7 +399,7 @@ public class TableData<T extends Cell> {
             
             // 重新统计所有列宽
             for (int i = 0; i < getTotalColumn(); i++) {
-                Column column = mColumns.get(i);
+                Column<T> column = mColumns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
@@ -420,12 +425,12 @@ public class TableData<T extends Cell> {
                 return;
             }
             
-            List<Row> deleteRows = new ArrayList<>();
+            List<Row<T>> deleteRows = new ArrayList<>();
             for (int i = start; i < end; i++) {
                 Row<T> row = mRows.get(i);
                 deleteRows.add(row);
                 for (int j = 0; j < mColumns.size(); j++) {
-                    Cell cell = row.getCells().get(j);
+                    T cell = row.getCells().get(j);
                     mColumns.get(j).getCells().remove(cell);
                 }
             }
@@ -438,7 +443,7 @@ public class TableData<T extends Cell> {
             
             // 重新统计所有列宽
             for (int i = 0; i < getTotalColumn(); i++) {
-                Column column = mColumns.get(i);
+                Column<T> column = mColumns.get(i);
                 int actualColumnWidth = Utils.getActualColumnWidth(column, 0, column.getCells().size(), mTable.getTableConfig());
                 column.setWidth(actualColumnWidth);
             }
@@ -462,7 +467,7 @@ public class TableData<T extends Cell> {
         }
         
         mHandler.post(() -> {
-            List<Column> deleteColumns = new ArrayList<>();
+            List<Column<T>> deleteColumns = new ArrayList<>();
             int totalColumn = getTotalColumn();
             for (int position : positions) {
                 if (position < 0 || position >= totalColumn) {
@@ -471,7 +476,7 @@ public class TableData<T extends Cell> {
                 Column<T> column = mColumns.get(position);
                 deleteColumns.add(column);
                 for (int j = 0; j < mRows.size(); j++) {
-                    Cell cell = column.getCells().get(j);
+                    T cell = column.getCells().get(j);
                     mRows.get(j).getCells().remove(cell);
                 }
             }
@@ -484,7 +489,7 @@ public class TableData<T extends Cell> {
             
             // 重新统计所有行高
             for (int i = 0; i < getTotalRow(); i++) {
-                Row row = mRows.get(i);
+                Row<T> row = mRows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
@@ -499,7 +504,6 @@ public class TableData<T extends Cell> {
      *
      * @param start 开始下标，必须满足 0 <= start < {@link #getTotalColumn()} && start < end下标
      * @param end   结束下标，必须满足 start < end <= {@link #getTotalColumn()}.
-     *
      */
     public void deleteColumnRange(int start, int end) {
         if (mHandler == null) {
@@ -511,12 +515,12 @@ public class TableData<T extends Cell> {
                 return;
             }
             
-            List<Column> deleteColumns = new ArrayList<>();
+            List<Column<T>> deleteColumns = new ArrayList<>();
             for (int i = start; i < end; i++) {
                 Column<T> column = mColumns.get(i);
                 deleteColumns.add(column);
                 for (int j = 0; j < mRows.size(); j++) {
-                    Cell cell = column.getCells().get(j);
+                    T cell = column.getCells().get(j);
                     mRows.get(j).getCells().remove(cell);
                 }
             }
@@ -529,7 +533,7 @@ public class TableData<T extends Cell> {
             
             // 重新统计所有行高
             for (int i = 0; i < getTotalRow(); i++) {
-                Row row = mRows.get(i);
+                Row<T> row = mRows.get(i);
                 int actualRowHeight = Utils.getActualRowHeight(row, 0, row.getCells().size(), mTable.getTableConfig());
                 row.setHeight(actualRowHeight);
             }
@@ -568,7 +572,7 @@ public class TableData<T extends Cell> {
             }
             
             Collections.swap(mColumns, from, to);
-            for (Row row : mRows) {
+            for (Row<T> row : mRows) {
                 Collections.swap(row.getCells(), from, to);
             }
         });
@@ -591,7 +595,7 @@ public class TableData<T extends Cell> {
             }
             
             Collections.swap(mRows, from, to);
-            for (Column column : mColumns) {
+            for (Column<T> column : mColumns) {
                 Collections.swap(column.getCells(), from, to);
             }
         });

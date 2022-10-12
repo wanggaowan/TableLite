@@ -74,14 +74,14 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 绘制边框
      */
-    private void drawBorder(ITable table, Canvas canvas, Rect drawRect, DrawConfig drawConfig, int row, int column) {
+    private void drawBorder(ITable<T> table, Canvas canvas, Rect drawRect, DrawConfig drawConfig, int row, int column) {
         if (drawConfig == null) {
             return;
         }
         
         if (drawConfig.getBorderSize() > 0) {
             fillBorderPaint(drawConfig);
-            TableData tableData = table.getTableData();
+            TableData<T> tableData = table.getTableData();
             int left = column == 0 ? drawRect.left + drawConfig.getBorderSize() / 2 : drawRect.left;
             int top = row == 0 ? drawRect.top + drawConfig.getBorderSize() / 2 : drawRect.top;
             int right = column == tableData.getTotalColumn() - 1 ? drawRect.right - drawConfig.getBorderSize() / 2 : drawRect.right;
@@ -112,7 +112,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             StaticLayout staticLayout;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 staticLayout = StaticLayout.Builder.obtain(text, 0, text.length(),
-                    PAINT, drawRect.width())
+                        PAINT, drawRect.width())
                     .build();
             } else {
                 staticLayout = new StaticLayout(text, 0, text.length(),
@@ -134,7 +134,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             highVersion = true;
             staticLayout = StaticLayout.Builder.obtain(text, 0, text.length(),
-                PAINT, drawRect.width())
+                    PAINT, drawRect.width())
                 .setMaxLines(drawConfig.isMultiLine() ? Integer.MAX_VALUE : 1)
                 .build();
         } else {
@@ -149,11 +149,6 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         float x;
         float y;
         switch (gravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
-            case Gravity.LEFT:
-                x = drawRect.left + drawConfig.getPaddingLeft();
-                PAINT.setTextAlign(Paint.Align.LEFT);
-                break;
-            
             case Gravity.RIGHT:
                 x = drawRect.right - drawConfig.getPaddingRight();
                 PAINT.setTextAlign(Paint.Align.RIGHT);
@@ -171,10 +166,6 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         }
         
         switch (gravity & Gravity.VERTICAL_GRAVITY_MASK) {
-            case Gravity.TOP:
-                y = drawRect.top + drawConfig.getPaddingTop();
-                break;
-            
             case Gravity.BOTTOM:
                 y = drawRect.bottom - textHeight - drawConfig.getPaddingBottom();
                 break;

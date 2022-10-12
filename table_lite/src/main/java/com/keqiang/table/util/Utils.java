@@ -22,6 +22,7 @@ public class Utils {
      * @param tableConfig 表格配置
      * @return 从开始单元格到结束单元格(不包含结束单元格)中所有单元格最大高度
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static int getActualRowHeight(Row row, int start, int end, TableConfig tableConfig) {
         if (row.isDragChangeSize()) {
             return row.getHeight();
@@ -71,6 +72,7 @@ public class Utils {
      * @param tableConfig 表格配置
      * @return 从开始单元格到结束单元格(不包含结束单元格)中所有单元格最大宽度
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static int getActualColumnWidth(Column column, int start, int end, TableConfig tableConfig) {
         if (column.isDragChangeSize()) {
             return column.getWidth();

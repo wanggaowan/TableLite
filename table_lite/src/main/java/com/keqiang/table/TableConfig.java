@@ -58,22 +58,22 @@ public class TableConfig {
     /**
      * 记录固定在顶部的行
      */
-    private Set<Integer> mRowTopFix;
+    private final Set<Integer> mRowTopFix;
     
     /**
      * 记录固定在底部的行
      */
-    private Set<Integer> mRowBottomFix;
+    private final Set<Integer> mRowBottomFix;
     
     /**
      * 记录固定在左边的列
      */
-    private Set<Integer> mColumnLeftFix;
+    private final Set<Integer> mColumnLeftFix;
     
     /**
      * 记录固定在右边的列
      */
-    private Set<Integer> mColumnRightFix;
+    private final Set<Integer> mColumnRightFix;
     
     /**
      * 是否高亮显示选中行，如果为{@code true},

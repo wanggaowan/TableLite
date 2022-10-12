@@ -67,7 +67,7 @@ public class Cell {
      *     ...// 省略
      *
      * @param width 如果值为{@link TableConfig#INVALID_VALUE},则表示宽度自适应,自适应宽度需要覆写{@link #measureWidth()}，
-     *              宽度大小受{@link TableConfig#minColumnWidth}和{@link TableConfig#maxColumnWidth}限制
+     *              宽度大小受{@link TableConfig#getMinColumnWidth()}和{@link TableConfig#getMaxColumnWidth()}限制
      */
     public void setWidth(int width) {
         this.width = width;
@@ -106,7 +106,7 @@ public class Cell {
      *     ...// 省略
      *
      * @param height 当值为{@link TableConfig#INVALID_VALUE},则表示高度自适应,自适应高度需要覆写{@link #measureHeight()}。
-     *               高度大小受{@link TableConfig#minRowHeight}和{@link TableConfig#maxRowHeight}限制
+     *               高度大小受{@link TableConfig#getMinRowHeight()}和{@link TableConfig#getMaxRowHeight()}限制
      * </pre>
      */
     public void setHeight(int height) {
@@ -123,14 +123,14 @@ public class Cell {
     }
     
     /**
-     * 测量绘制内容的宽度，大小限制在{@link TableConfig#minColumnWidth}和{@link TableConfig#maxColumnWidth}之间
+     * 测量绘制内容的宽度，大小限制在{@link TableConfig#getMinColumnWidth()}和{@link TableConfig#getMaxColumnWidth()}之间
      */
     public int measureWidth() {
         return 0;
     }
     
     /**
-     * 测量绘制内容的高度，大小限制在{@link TableConfig#minRowHeight}和{@link TableConfig#maxRowHeight}之间
+     * 测量绘制内容的高度，大小限制在{@link TableConfig#getMinRowHeight()}和{@link TableConfig#getMaxRowHeight()}之间
      */
     public int measureHeight() {
         return 0;

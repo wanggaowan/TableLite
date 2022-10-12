@@ -55,7 +55,7 @@ public class TableRender<T extends Cell> {
     /**
      * 界面可见的单元格数据
      */
-    private List<ShowCell> mShowCells;
+    private final List<ShowCell> mShowCells;
     
     /**
      * 绘制蒙层Paint
@@ -91,7 +91,7 @@ public class TableRender<T extends Cell> {
      * @return {@code false}没有执行绘制操作，{@code true}以重新绘制
      */
     public boolean draw(Canvas canvas) {
-        TableData tableData = mTable.getTableData();
+        TableData<T> tableData = mTable.getTableData();
         Rect showRect = mTable.getShowRect();
         
         int totalRow = tableData.getTotalRow();
@@ -160,15 +160,14 @@ public class TableRender<T extends Cell> {
         
         int totalRowHeight = 0;
         int totalColumnWidth = 0;
-        for (Row row : rows) {
+        for (Row<T> row : rows) {
             totalRowHeight += row.getHeight();
         }
         
-        for (Column column : columns) {
+        for (Column<T> column : columns) {
             totalColumnWidth += column.getWidth();
         }
         
-        //noinspection SuspiciousNameCombination
         mActualSizeRect.set(0, 0, totalColumnWidth, totalRowHeight);
     }
     
@@ -205,7 +204,7 @@ public class TableRender<T extends Cell> {
                     break;
                 }
                 
-                Column column = columns.get(j);
+                Column<T> column = columns.get(j);
                 if (left + column.getWidth() <= fixLeftColumnWidth) {
                     left += column.getWidth();
                     continue;
@@ -278,7 +277,7 @@ public class TableRender<T extends Cell> {
             }
             
             preStart = tempRowTopFix;
-            Row row = rows.get(tempRowTopFix);
+            Row<T> row = rows.get(tempRowTopFix);
             int bottom = fixTopRowHeight + row.getHeight();
             
             int fixLeftColumnWidth = drawColumnFixLeftForFixRow(canvas, tempRowTopFix, fixTopRowHeight, bottom);
@@ -334,7 +333,7 @@ public class TableRender<T extends Cell> {
             }
             
             preStart = tempRowBottomFix;
-            Row row = rows.get(tempRowBottomFix);
+            Row<T> row = rows.get(tempRowBottomFix);
             int bottom = showHeight - fixBottomRowHeight;
             int top = bottom - row.getHeight();
             
@@ -405,7 +404,7 @@ public class TableRender<T extends Cell> {
             }
             
             preStart = tempColumnLeftFix;
-            Column column = columns.get(tempColumnLeftFix);
+            Column<T> column = columns.get(tempColumnLeftFix);
             int right = fixLeftColumnWidth + column.getWidth();
             
             mClipRect.set(fixLeftColumnWidth, fixTopRowHeight, right, showHeight - fixBottomRowHeight);
@@ -487,7 +486,7 @@ public class TableRender<T extends Cell> {
             }
             
             preStart = tempColumnRightFix;
-            Column column = columns.get(tempColumnRightFix);
+            Column<T> column = columns.get(tempColumnRightFix);
             int right = showWidth - fixRightColumnWidth;
             int left = right - column.getWidth();
             
@@ -705,7 +704,7 @@ public class TableRender<T extends Cell> {
      * 绘制蒙层，高亮行列
      */
     protected void drawMask(Canvas canvas, Rect drawRect, int row, int column) {
-        TouchHelper touchHelper = mTable.getTouchHelper();
+        TouchHelper<T> touchHelper = mTable.getTouchHelper();
         if (row != touchHelper.getNeedMaskRowIndex() && column != touchHelper.getNeedMaskColumnIndex()) {
             return;
         }

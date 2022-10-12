@@ -92,4 +92,6 @@ public interface ITable<T extends Cell> {
      * 将事件发送到Table所在线程
      */
     boolean post(Runnable action);
+    
+    boolean isInEditMode();
 }

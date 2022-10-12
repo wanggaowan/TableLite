@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ShowCell extends ObjectPool.Poolable {
     private static class Inner {
-        private static ObjectPool<ShowCell> pool;
+        private static final ObjectPool<ShowCell> pool;
         
         static {
             pool = ObjectPool.create(64, new ShowCell());
@@ -70,7 +70,7 @@ public class ShowCell extends ObjectPool.Poolable {
     /**
      * 单元格绘制矩形
      */
-    private Rect drawRect;
+    private final Rect drawRect;
     
     /**
      * 是否是行固定
