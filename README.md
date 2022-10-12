@@ -1,5 +1,5 @@
 # TableLite
-Android 轻量版Table组件。[Kotlin语言版本](https://github.com/wanggaowan/TableLiteKotlin)
+Android 轻量版Table组件
 
 * [项目github地址](https://github.com/wanggaowan/TableLite)
 * [版本更新日志](/update.md/)
