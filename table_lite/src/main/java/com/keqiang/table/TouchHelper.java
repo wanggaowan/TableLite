@@ -16,6 +16,7 @@ import android.widget.Scroller;
 
 import com.keqiang.table.interfaces.CellClickListener;
 import com.keqiang.table.interfaces.CellDragChangeListener;
+import com.keqiang.table.interfaces.CellTouchListener;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.interfaces.OnScrollChangeListener;
 import com.keqiang.table.model.Cell;
@@ -102,9 +103,15 @@ public class TouchHelper<T extends Cell> {
     private CellClickListener mCellClickListener;
     
     /**
+     * 单元格触摸监听
+     */
+    private CellTouchListener mCellTouchListener;
+    
+    /**
      * 单元格拖拽监听
      */
     private CellDragChangeListener mCellDragChangeListener;
+    
     
     private OnScrollChangeListener mOnScrollChangeListener;
     
@@ -270,7 +277,13 @@ public class TouchHelper<T extends Cell> {
                 mDragColumnIndex = TableConfig.INVALID_VALUE;
                 break;
         }
-        return mGestureDetector.onTouchEvent(event);
+        
+        boolean disposeTouch = mGestureDetector.onTouchEvent(event);
+        if (mCellTouchListener != null && mClickRowIndex != TableConfig.INVALID_VALUE && mClickColumnIndex != TableConfig.INVALID_VALUE) {
+            mCellTouchListener.onTouch(event, mClickRowIndex, mClickColumnIndex);
+        }
+        
+        return disposeTouch;
     }
     
     /**
@@ -408,6 +421,13 @@ public class TouchHelper<T extends Cell> {
      */
     public void setCellClickListener(CellClickListener cellClickListener) {
         mCellClickListener = cellClickListener;
+    }
+    
+    /**
+     * 单元格触摸监听
+     */
+    public void setCellTouchListener(CellTouchListener cellTouchListener) {
+        mCellTouchListener = cellTouchListener;
     }
     
     /**

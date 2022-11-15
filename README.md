@@ -21,7 +21,7 @@ Android 轻量版Table组件
 2. 增加依赖
    ```groovy
    dependencies {
-        implementation 'com.github.wanggaowan:TableLite:1.13'
+        implementation 'com.github.wanggaowan:TableLite:1.16'
    }
    ```
 
