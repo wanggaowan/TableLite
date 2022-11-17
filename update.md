@@ -1,4 +1,7 @@
 ### 更新日志
+- v1.17
+  >TextCellDraw部分私有方法改为protected，运行子类覆写
+
 - v1.16
   >增加CellTouchListener监听，可得到单元格更精细的触摸事件回调
 

@@ -145,7 +145,7 @@ public class TableActivity extends AppCompatActivity {
         }
         
         @Override
-        public DrawConfig getConfig(int row, int column) {
+        public DrawConfig getConfig(int row, int column, Cell cell) {
             if (column == 0) {
                 mDrawConfig.setBackgroundColor(Color.GREEN);
             } else if (column == 1) {

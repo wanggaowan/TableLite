@@ -32,7 +32,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
      * @param row    单元格所在行
      * @param column 单元格所在列
      */
-    public abstract DrawConfig getConfig(int row, int column);
+    public abstract DrawConfig getConfig(int row, int column, T cell);
     
     @Override
     public void onCellDraw(ITable<T> table, Canvas canvas, T cell, Rect drawRect, int row, int column) {
@@ -40,7 +40,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             return;
         }
         
-        DrawConfig drawConfig = getConfig(row, column);
+        DrawConfig drawConfig = getConfig(row, column, cell);
         drawBackground(canvas, drawRect, drawConfig);
         drawText(canvas, cell, drawRect, row, column, drawConfig);
         drawBorder(table, canvas, drawRect, drawConfig, row, column);
@@ -49,7 +49,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 绘制背景
      */
-    private void drawBackground(Canvas canvas, Rect drawRect, DrawConfig drawConfig) {
+    protected void drawBackground(Canvas canvas, Rect drawRect, DrawConfig drawConfig) {
         if (drawConfig == null) {
             return;
         }
@@ -74,7 +74,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 绘制边框
      */
-    private void drawBorder(ITable<T> table, Canvas canvas, Rect drawRect, DrawConfig drawConfig, int row, int column) {
+    protected void drawBorder(ITable<T> table, Canvas canvas, Rect drawRect, DrawConfig drawConfig, int row, int column) {
         if (drawConfig == null) {
             return;
         }
@@ -94,7 +94,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 绘制文本
      */
-    private void drawText(Canvas canvas, Cell cell, Rect drawRect, int row, int column, DrawConfig drawConfig) {
+    protected void drawText(Canvas canvas, Cell cell, Rect drawRect, int row, int column, DrawConfig drawConfig) {
         Object data = cell.getData();
         if (!(data instanceof CharSequence)) {
             return;
@@ -242,7 +242,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 填充绘制文字画笔
      */
-    private void fillTextPaint(DrawConfig drawConfig) {
+    protected void fillTextPaint(DrawConfig drawConfig) {
         PAINT.reset();
         PAINT.setAntiAlias(true);
         PAINT.setStyle(Paint.Style.FILL);
@@ -258,7 +258,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 填充绘制背景画笔
      */
-    private void fillBackgroundPaint(DrawConfig drawConfig) {
+    protected void fillBackgroundPaint(DrawConfig drawConfig) {
         PAINT.reset();
         PAINT.setAntiAlias(true);
         PAINT.setStyle(Paint.Style.FILL);
@@ -272,7 +272,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 填充绘制边框画笔
      */
-    private void fillBorderPaint(DrawConfig drawConfig) {
+    protected void fillBorderPaint(DrawConfig drawConfig) {
         PAINT.reset();
         PAINT.setAntiAlias(true);
         PAINT.setStyle(Paint.Style.STROKE);
