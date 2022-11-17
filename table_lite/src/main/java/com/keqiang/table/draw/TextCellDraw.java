@@ -23,8 +23,8 @@ import com.keqiang.table.model.TableData;
  */
 @SuppressLint("RtlHardcoded")
 public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
-    private static final TextPaint PAINT = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private static final Rect TEMP_RECT = new Rect();
+    protected static final TextPaint PAINT = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    protected static final Rect TEMP_RECT = new Rect();
     
     /**
      * 获取单元格绘制配置数据
@@ -288,7 +288,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 获取文本的高度
      */
-    private float getTextHeight() {
+    protected float getTextHeight() {
         Paint.FontMetrics metrics = PAINT.getFontMetrics();
         return metrics.descent - metrics.ascent;
     }
