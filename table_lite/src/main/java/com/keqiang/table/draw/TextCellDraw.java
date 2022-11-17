@@ -94,7 +94,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
     /**
      * 绘制文本
      */
-    protected void drawText(Canvas canvas, Cell cell, Rect drawRect, int row, int column, DrawConfig drawConfig) {
+    protected void drawText(Canvas canvas, T cell, Rect drawRect, int row, int column, DrawConfig drawConfig) {
         Object data = cell.getData();
         if (!(data instanceof CharSequence)) {
             return;
