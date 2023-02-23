@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.keqiang.table.interfaces.CellClickListener;
+import com.keqiang.table.interfaces.CellClickListenerEx;
 import com.keqiang.table.interfaces.CellDragChangeListener;
 import com.keqiang.table.interfaces.CellTouchListener;
 import com.keqiang.table.interfaces.ITable;
@@ -101,6 +102,11 @@ public class TouchHelper<T extends Cell> {
      * 单元格点击监听
      */
     private CellClickListener mCellClickListener;
+    
+    /**
+     * 单元格点击监听
+     */
+    private CellClickListenerEx mCellClickListenerEx;
     
     /**
      * 单元格触摸监听
@@ -424,6 +430,13 @@ public class TouchHelper<T extends Cell> {
     }
     
     /**
+     * 单元格点击监听
+     */
+    public void setCellClickListenerEx(CellClickListenerEx cellClickListener) {
+        mCellClickListenerEx = cellClickListener;
+    }
+    
+    /**
      * 单元格触摸监听
      */
     public void setCellTouchListener(CellTouchListener cellTouchListener) {
@@ -521,6 +534,10 @@ public class TouchHelper<T extends Cell> {
                 
                 if (mCellClickListener != null) {
                     mCellClickListener.onClick(mClickRowIndex, mClickColumnIndex);
+                }
+                
+                if (mCellClickListenerEx != null) {
+                    mCellClickListenerEx.onClick(e, mClickRowIndex, mClickColumnIndex);
                 }
                 return true;
             }

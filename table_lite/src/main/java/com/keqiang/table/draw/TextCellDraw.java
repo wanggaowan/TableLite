@@ -129,17 +129,20 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         
         fillTextPaint(drawConfig);
         
+        int width = drawRect.width() - drawConfig.getPaddingLeft() - drawConfig.getPaddingRight()
+            - drawConfig.getBorderSize();
+        int halfBorderSize = drawConfig.getBorderSize() / 2;
         boolean highVersion = false;
         StaticLayout staticLayout;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             highVersion = true;
             staticLayout = StaticLayout.Builder.obtain(text, 0, text.length(),
-                    PAINT, drawRect.width())
+                    PAINT, width)
                 .setMaxLines(drawConfig.isMultiLine() ? Integer.MAX_VALUE : 1)
                 .build();
         } else {
             staticLayout = new StaticLayout(text, 0, text.length(),
-                PAINT, drawRect.width(),
+                PAINT, width,
                 Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false);
         }
         
@@ -150,7 +153,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         float y;
         switch (gravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
             case Gravity.RIGHT:
-                x = drawRect.right - drawConfig.getPaddingRight();
+                x = drawRect.right - drawConfig.getPaddingRight() - halfBorderSize;
                 PAINT.setTextAlign(Paint.Align.RIGHT);
                 break;
             
@@ -160,14 +163,14 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
                 break;
             
             default:
-                x = drawRect.left + drawConfig.getPaddingLeft();
+                x = drawRect.left + drawConfig.getPaddingLeft() + halfBorderSize;
                 PAINT.setTextAlign(Paint.Align.LEFT);
                 break;
         }
         
         switch (gravity & Gravity.VERTICAL_GRAVITY_MASK) {
             case Gravity.BOTTOM:
-                y = drawRect.bottom - textHeight - drawConfig.getPaddingBottom();
+                y = drawRect.bottom - textHeight - drawConfig.getPaddingBottom() - halfBorderSize;
                 break;
             
             case Gravity.CENTER_VERTICAL:
@@ -175,67 +178,38 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
                 break;
             
             default:
-                y = drawRect.top + drawConfig.getPaddingTop();
+                y = drawRect.top + drawConfig.getPaddingTop() + halfBorderSize;
                 break;
         }
         
-        if (drawConfig.getBorderSize() == 0
-            && drawConfig.getPaddingLeft() == 0
-            && drawConfig.getPaddingRight() == 0
-            && drawConfig.getPaddingTop() == 0
-            && drawConfig.getPaddingBottom() == 0) {
-            
-            boolean cut = false;
-            if (!highVersion && !drawConfig.isMultiLine()) {
-                float singleTextHeight = getTextHeight();
-                // 保证单行
-                TEMP_RECT.set(drawRect.left, (int) y, drawRect.right, (int) (y + singleTextHeight));
-                if (TEMP_RECT.width() <= 0 || TEMP_RECT.height() <= 0) {
-                    return;
-                }
-                cut = true;
+        if (!highVersion && !drawConfig.isMultiLine()) {
+            // 低版本保证单行
+            int top = drawRect.top + drawConfig.getPaddingTop() + halfBorderSize;
+            if (top < y) {
+                top = (int) y;
             }
             
+            int bottom = drawRect.bottom - drawConfig.getPaddingBottom() - halfBorderSize;
+            float singleTextHeight = getTextHeight();
+            if (bottom > y + singleTextHeight) {
+                bottom = (int) (y + singleTextHeight);
+            }
+            
+            TEMP_RECT.set(drawRect.left + drawConfig.getPaddingLeft() + halfBorderSize, top,
+                drawRect.right - drawConfig.getPaddingRight() - halfBorderSize, bottom);
+        } else {
+            TEMP_RECT.set(drawRect.left + drawConfig.getPaddingLeft() + halfBorderSize,
+                drawRect.top + drawConfig.getPaddingTop() + halfBorderSize,
+                drawRect.right - drawConfig.getPaddingRight() - halfBorderSize,
+                drawRect.bottom - drawConfig.getPaddingBottom() - halfBorderSize);
+        }
+        
+        if (TEMP_RECT.width() > 0 && TEMP_RECT.height() > 0) {
             canvas.save();
-            if (cut) {
-                canvas.clipRect(TEMP_RECT);
-            }
+            canvas.clipRect(TEMP_RECT);
             canvas.translate(x, y);
             staticLayout.draw(canvas);
             canvas.restore();
-        } else {
-            if (!highVersion && !drawConfig.isMultiLine()) {
-                // 低版本保证单行
-                
-                int top = drawRect.top + drawConfig.getPaddingTop() + drawConfig.getBorderSize() / 2;
-                if (top < y) {
-                    top = (int) y;
-                }
-                
-                int bottom = drawRect.bottom - drawConfig.getPaddingBottom() - drawConfig.getBorderSize() / 2;
-                float singleTextHeight = getTextHeight();
-                if (bottom > y + singleTextHeight) {
-                    bottom = (int) (y + singleTextHeight);
-                }
-                
-                TEMP_RECT.set(drawRect.left + drawConfig.getPaddingLeft() + drawConfig.getBorderSize() / 2,
-                    top,
-                    drawRect.right - drawConfig.getPaddingRight() - drawConfig.getBorderSize() / 2,
-                    bottom);
-            } else {
-                TEMP_RECT.set(drawRect.left + drawConfig.getPaddingLeft() + drawConfig.getBorderSize() / 2,
-                    drawRect.top + drawConfig.getPaddingTop() + drawConfig.getBorderSize() / 2,
-                    drawRect.right - drawConfig.getPaddingRight() - drawConfig.getBorderSize() / 2,
-                    drawRect.bottom - drawConfig.getPaddingBottom() - drawConfig.getBorderSize() / 2);
-            }
-            
-            if (TEMP_RECT.width() > 0 && TEMP_RECT.height() > 0) {
-                canvas.save();
-                canvas.clipRect(TEMP_RECT);
-                canvas.translate(x, y);
-                staticLayout.draw(canvas);
-                canvas.restore();
-            }
         }
     }
     
