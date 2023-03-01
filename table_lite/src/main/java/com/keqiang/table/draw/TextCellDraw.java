@@ -131,14 +131,16 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             return;
         }
         
-        fillTextPaint(drawConfig);
-        
-        int width = drawRect.width() - drawConfig.getPaddingLeft() - drawConfig.getPaddingRight()
-            - drawConfig.getBorderSize();
+        int width = drawConfig.isMultiLine() ?
+            // 多行必须设置实际能显示的大小，否则换行绘制会出现问题
+            drawRect.width() - drawConfig.getPaddingLeft() - drawConfig.getPaddingRight() - drawConfig.borderSize
+            // 如果单行和多行那样设置宽度，则宽度不够时，文字直接不绘制，而不是绘制后被裁剪
+            : drawRect.width() - drawConfig.borderSize;
         if (width <= 0) {
             return;
         }
-        
+    
+        fillTextPaint(drawConfig);
         int halfBorderSize = drawConfig.getBorderSize() / 2;
         boolean highVersion = false;
         StaticLayout staticLayout;
