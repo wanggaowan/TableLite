@@ -106,6 +106,10 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         }
         
         if (drawConfig == null) {
+            if (drawRect.width() <= 0) {
+                return;
+            }
+            
             fillTextPaint(null);
             PAINT.setTextAlign(Paint.Align.LEFT);
             
@@ -131,6 +135,10 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         
         int width = drawRect.width() - drawConfig.getPaddingLeft() - drawConfig.getPaddingRight()
             - drawConfig.getBorderSize();
+        if (width <= 0) {
+            return;
+        }
+        
         int halfBorderSize = drawConfig.getBorderSize() / 2;
         boolean highVersion = false;
         StaticLayout staticLayout;
