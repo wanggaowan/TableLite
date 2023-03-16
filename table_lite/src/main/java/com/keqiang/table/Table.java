@@ -187,10 +187,10 @@ public class Table<T extends Cell> extends View implements ITable<T> {
         
         if (direction < 0) {
             // 向顶部滑动
-            return mTouchHelper.getScrollY() > 0;
+            return !mTouchHelper.isScrollToTop();
         } else {
             // 向底部滑动
-            return getActualSizeRect().height() > mTouchHelper.getScrollY() + mShowRect.height();
+            return !mTouchHelper.isScrollToBottom();
         }
     }
     
@@ -207,10 +207,10 @@ public class Table<T extends Cell> extends View implements ITable<T> {
         
         if (direction < 0) {
             // 向顶部滑动
-            return mTouchHelper.getScrollX() > 0;
+            return !mTouchHelper.isScrollToLeft();
         } else {
             // 向底部滑动
-            return getActualSizeRect().width() > mTouchHelper.getScrollX() + mShowRect.width();
+            return !mTouchHelper.isScrollToRight();
         }
     }
     

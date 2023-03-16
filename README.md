@@ -21,7 +21,7 @@ Android 轻量版Table组件
 2. 增加依赖
    ```groovy
    dependencies {
-        implementation 'com.github.wanggaowan:TableLite:1.17'
+        implementation 'com.github.wanggaowan:TableLite:Tag'
    }
    ```
 
@@ -54,7 +54,8 @@ Android 轻量版Table组件
 **3.TouchHelper(表格触摸处理)，可配置项如下：**
  - 设置单元格点击监听
  - 设置单元格拖拽监听
-- 设置表格滑动监听
+ - 设置表格滑动监听
+ - 设置单元格长按监听
  - 设置Fling手势滑动速率，滑动方向（横向，纵向或双向）以及表格实际大小相较于
  显示区域大小的多少倍时才处理Fling手势
  - 滑动表格到指定位置

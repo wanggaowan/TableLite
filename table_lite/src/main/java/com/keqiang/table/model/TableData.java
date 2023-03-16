@@ -238,7 +238,7 @@ public class TableData<T extends Cell> {
      * 如果需要指定添加位置，可调用{@link #addRowData(int, int)}。
      * 调用此方法之前，请确保{@link ITable#getCellFactory()}不为null，否则将不做任何处理。
      *
-     * @param addRowCount 新增加的行数，数据会通过{@link CellFactory#get(int, int)}获取
+     * @param addRowCount 新增加的行数，数据会通过{@link CellFactory#get(int, int, int, int)}获取
      */
     public void addRowData(int addRowCount) {
         addRowData(addRowCount, getTotalRow());
@@ -248,7 +248,7 @@ public class TableData<T extends Cell> {
      * 增加行数据(异步操作，可在任何线程调用)，数据处理完成后会主动调用界面刷新操作。
      * 调用此方法之前，请确保{@link ITable#getCellFactory()}不为null，否则将不做任何处理。
      *
-     * @param addRowCount    新增加的行数，数据会通过{@link CellFactory#get(int, int)}获取
+     * @param addRowCount    新增加的行数，数据会通过{@link CellFactory#get(int, int, int, int)}获取
      * @param insertPosition 新数据插入位置，如果<=0则插入在头部，如果>={@link #getTotalRow()}，则插入的尾部，
      *                       否则插入到指定位置
      */
@@ -302,7 +302,7 @@ public class TableData<T extends Cell> {
      * 如果需要指定添加位置，可调用{@link #addColumnData(int, int)}。
      * 调用此方法之前，请确保{@link ITable#getCellFactory()}不为null，否则将不做任何处理。
      *
-     * @param addColumnCount 新增加的列数，数据会通过{@link CellFactory#get(int, int)}获取
+     * @param addColumnCount 新增加的列数，数据会通过{@link CellFactory#get(int, int, int, int)}获取
      */
     public void addColumnData(int addColumnCount) {
         addColumnData(addColumnCount, getTotalColumn());
@@ -312,7 +312,7 @@ public class TableData<T extends Cell> {
      * 增加列数据(异步操作，可在任何线程调用)，数据处理完成后会主动调用界面刷新操作。
      * 调用此方法之前，请确保{@link ITable#getCellFactory()}不为null，否则将不做任何处理。
      *
-     * @param addColumnCount 新增加的列数，数据会通过{@link CellFactory#get(int, int)}获取
+     * @param addColumnCount 新增加的列数，数据会通过{@link CellFactory#get(int, int, int, int)}获取
      * @param insertPosition 新数据插入位置，如果<=0则插入在左边，如果>={@link #getTotalColumn()}，则插入的右边，
      *                       否则插入到指定位置
      */
@@ -615,6 +615,7 @@ public class TableData<T extends Cell> {
             return;
         }
         
+        
         for (int i = rowStart; i < totalRow; i++) {
             Row<T> row = new Row<>();
             List<T> rowCells = new ArrayList<>();
@@ -623,7 +624,7 @@ public class TableData<T extends Cell> {
             mRows.add(insertPosition, row);
             
             for (int j = 0; j < totalColumn; j++) {
-                T cell = cellFactory.get(insertPosition, j);
+                T cell = cellFactory.get(insertPosition, j, totalRow, totalColumn);
                 rowCells.add(cell);
                 if (j >= mColumns.size()) {
                     Column<T> column = new Column<>();
@@ -663,7 +664,7 @@ public class TableData<T extends Cell> {
             mColumns.add(insertPosition, column);
             
             for (int j = 0; j < totalRow; j++) {
-                T cell = cellFactory.get(j, insertPosition);
+                T cell = cellFactory.get(j, insertPosition, totalRow, totalColumn);
                 columnCells.add(cell);
                 if (j >= mRows.size()) {
                     Row<T> row = new Row<>();

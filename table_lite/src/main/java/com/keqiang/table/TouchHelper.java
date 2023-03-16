@@ -17,6 +17,7 @@ import android.widget.Scroller;
 import com.keqiang.table.interfaces.CellClickListener;
 import com.keqiang.table.interfaces.CellClickListenerEx;
 import com.keqiang.table.interfaces.CellDragChangeListener;
+import com.keqiang.table.interfaces.CellLongPressListener;
 import com.keqiang.table.interfaces.CellTouchListener;
 import com.keqiang.table.interfaces.ITable;
 import com.keqiang.table.interfaces.OnScrollChangeListener;
@@ -118,8 +119,15 @@ public class TouchHelper<T extends Cell> {
      */
     private CellDragChangeListener mCellDragChangeListener;
     
-    
+    /**
+     * 表格滑动监听
+     */
     private OnScrollChangeListener mOnScrollChangeListener;
+    
+    /**
+     * 单元格长按监听
+     */
+    private CellLongPressListener mCellLongPressListener;
     
     /**
      * 点击处单元格所在行
@@ -393,7 +401,7 @@ public class TouchHelper<T extends Cell> {
     /**
      * @return {@code true}触发拖拽改变列宽或行高的动作
      */
-    boolean isDragChangeSize() {
+    public boolean isDragChangeSize() {
         return mDragChangeSize;
     }
     
@@ -455,6 +463,41 @@ public class TouchHelper<T extends Cell> {
      */
     public void setOnScrollChangeListener(OnScrollChangeListener onScrollChangeListener) {
         mOnScrollChangeListener = onScrollChangeListener;
+    }
+    
+    /**
+     * 设置单元格长按监听
+     */
+    public void setCellLongPressListener(CellLongPressListener cellLongPressListener) {
+        mCellLongPressListener = cellLongPressListener;
+    }
+    
+    /**
+     * 是否滑动到了顶部
+     */
+    public boolean isScrollToTop() {
+        return mScrollY <= 0;
+    }
+    
+    /**
+     * 是否滑动到了底部
+     */
+    public boolean isScrollToBottom() {
+        return mTable.getActualSizeRect().height() <= mScrollY + mTable.getShowRect().height();
+    }
+    
+    /**
+     * 是否滑动到了最左边
+     */
+    public boolean isScrollToLeft() {
+        return mScrollX <= 0;
+    }
+    
+    /**
+     * 是否滑动到了最右边
+     */
+    public boolean isScrollToRight() {
+        return mTable.getActualSizeRect().width() <= mScrollX + mTable.getShowRect().width();
     }
     
     /**
@@ -548,6 +591,10 @@ public class TouchHelper<T extends Cell> {
             longPressX = e.getX();
             longPressY = e.getY();
             mLongPressDone = true;
+            if (mCellLongPressListener != null && mClickRowIndex != TableConfig.INVALID_VALUE
+                && mClickColumnIndex != TableConfig.INVALID_VALUE) {
+                mCellLongPressListener.onPress(mClickRowIndex, mClickColumnIndex);
+            }
             dragChangeSize(0, 0, true);
         }
         

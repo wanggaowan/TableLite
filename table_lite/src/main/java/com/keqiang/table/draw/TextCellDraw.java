@@ -9,6 +9,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 
 import com.keqiang.table.interfaces.ICellDraw;
@@ -131,7 +132,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             return;
         }
         
-        int width = drawConfig.isMultiLine() ?
+        int width = drawConfig.getMaxLines() > 1 ?
             // 多行必须设置实际能显示的大小，否则换行绘制会出现问题
             drawRect.width() - drawConfig.getPaddingLeft() - drawConfig.getPaddingRight() - drawConfig.borderSize
             // 如果单行和多行那样设置宽度，则宽度不够时，文字直接不绘制，而不是绘制后被裁剪
@@ -139,21 +140,21 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         if (width <= 0) {
             return;
         }
-    
+        
         fillTextPaint(drawConfig);
         int halfBorderSize = drawConfig.getBorderSize() / 2;
         boolean highVersion = false;
         StaticLayout staticLayout;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             highVersion = true;
-            staticLayout = StaticLayout.Builder.obtain(text, 0, text.length(),
-                    PAINT, width)
-                .setMaxLines(drawConfig.isMultiLine() ? Integer.MAX_VALUE : 1)
+            staticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), PAINT, width)
+                .setMaxLines(drawConfig.maxLines)
+                .setEllipsize(TruncateAt.END)
+                .setEllipsizedWidth(width)
                 .build();
         } else {
-            staticLayout = new StaticLayout(text, 0, text.length(),
-                PAINT, width,
-                Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false);
+            staticLayout = new StaticLayout(text, 0, text.length(), PAINT, width,
+                Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false, TruncateAt.END, width);
         }
         
         float textHeight = staticLayout.getHeight();
@@ -192,7 +193,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
                 break;
         }
         
-        if (!highVersion && !drawConfig.isMultiLine()) {
+        if (!highVersion && drawConfig.maxLines <= 1) {
             // 低版本保证单行
             int top = drawRect.top + drawConfig.getPaddingTop() + halfBorderSize;
             if (top < y) {
@@ -336,9 +337,9 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         private int borderColor;
         
         /**
-         * 是否多行绘制
+         * 最大绘制行数
          */
-        private boolean multiLine;
+        private int maxLines;
         
         public int getTextColor() {
             return textColor;
@@ -428,12 +429,12 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             this.borderSize = borderSize;
         }
         
-        public boolean isMultiLine() {
-            return multiLine;
+        public int getMaxLines() {
+            return maxLines;
         }
         
-        public void setMultiLine(boolean multiLine) {
-            this.multiLine = multiLine;
+        public void setMaxLines(int maxLines) {
+            this.maxLines = maxLines;
         }
     }
 }

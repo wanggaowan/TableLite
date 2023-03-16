@@ -55,7 +55,7 @@ public class TableActivity extends AppCompatActivity {
         mTextPaint.setColor(Color.BLACK);
         
         mTable.setCellDraw(new TestTextCellDraw());
-        mTable.setCellFactory((row, column) -> new Cell(mRowList.get(row).mColumns.get(column).text) {
+        mTable.setCellFactory((row, column, totalRow, totalColumn) -> new Cell(mRowList.get(row).mColumns.get(column).text) {
             @Override
             public int measureWidth() {
                 return (int) (60 + mTextPaint.measureText(getData()));
@@ -132,7 +132,7 @@ public class TableActivity extends AppCompatActivity {
         mTable.getTableData().deleteRowRange(1, 3);
     }
     
-    public class TestTextCellDraw extends TextCellDraw<Cell> {
+    public static class TestTextCellDraw extends TextCellDraw<Cell> {
         DrawConfig mDrawConfig;
         
         public TestTextCellDraw() {
