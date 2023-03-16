@@ -1,6 +1,8 @@
 ### 更新日志
 - v1.17
   >TextCellDraw部分私有方法改为protected，允许子类覆写
+  >CellFactory回调增加总行数和总列数参数
+  >TouchHelper增加单元格长按监听及其它判断滑动相关方法
 
 - v1.16
   >增加CellTouchListener监听，可得到单元格更精细的触摸事件回调
