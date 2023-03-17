@@ -132,7 +132,15 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             return;
         }
         
-        int width = drawConfig.getMaxLines() > 1 ?
+        fillTextPaint(drawConfig);
+        float singleTextHeight = getTextHeight();
+        float drawHeight = drawRect.height() - drawConfig.borderSize - drawConfig.paddingTop - drawConfig.paddingBottom;
+        int maxLines = drawConfig.isMultiLine() ? (singleTextHeight > 0 ? (int) (drawHeight / singleTextHeight) : Integer.MAX_VALUE) : 1;
+        if (maxLines <= 0) {
+            maxLines = 1;
+        }
+        
+        int width = maxLines > 1 ?
             // 多行必须设置实际能显示的大小，否则换行绘制会出现问题
             drawRect.width() - drawConfig.getPaddingLeft() - drawConfig.getPaddingRight() - drawConfig.borderSize
             // 如果单行和多行那样设置宽度，则宽度不够时，文字直接不绘制，而不是绘制后被裁剪
@@ -141,20 +149,20 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             return;
         }
         
-        fillTextPaint(drawConfig);
+        
         int halfBorderSize = drawConfig.getBorderSize() / 2;
         boolean highVersion = false;
         StaticLayout staticLayout;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             highVersion = true;
             staticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), PAINT, width)
-                .setMaxLines(drawConfig.maxLines)
-                .setEllipsize(TruncateAt.END)
+                .setMaxLines(maxLines)
+                .setEllipsize(drawConfig.ellipsize)
                 .setEllipsizedWidth(width)
                 .build();
         } else {
             staticLayout = new StaticLayout(text, 0, text.length(), PAINT, width,
-                Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false, TruncateAt.END, width);
+                Layout.Alignment.ALIGN_NORMAL, 1.f, 0.f, false, drawConfig.ellipsize, width);
         }
         
         float textHeight = staticLayout.getHeight();
@@ -193,7 +201,7 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
                 break;
         }
         
-        if (!highVersion && drawConfig.maxLines <= 1) {
+        if (!highVersion && maxLines <= 1) {
             // 低版本保证单行
             int top = drawRect.top + drawConfig.getPaddingTop() + halfBorderSize;
             if (top < y) {
@@ -201,7 +209,6 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             }
             
             int bottom = drawRect.bottom - drawConfig.getPaddingBottom() - halfBorderSize;
-            float singleTextHeight = getTextHeight();
             if (bottom > y + singleTextHeight) {
                 bottom = (int) (y + singleTextHeight);
             }
@@ -337,9 +344,14 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
         private int borderColor;
         
         /**
-         * 最大绘制行数
+         * 是否多行绘制
          */
-        private int maxLines;
+        private boolean multiLine;
+        
+        /**
+         * 绘制显示不下时的裁断类型
+         */
+        private TextUtils.TruncateAt ellipsize = TruncateAt.END;
         
         public int getTextColor() {
             return textColor;
@@ -429,12 +441,20 @@ public abstract class TextCellDraw<T extends Cell> implements ICellDraw<T> {
             this.borderSize = borderSize;
         }
         
-        public int getMaxLines() {
-            return maxLines;
+        public boolean isMultiLine() {
+            return multiLine;
         }
         
-        public void setMaxLines(int maxLines) {
-            this.maxLines = maxLines;
+        public void setMultiLine(boolean multiLine) {
+            this.multiLine = multiLine;
+        }
+        
+        public TruncateAt getEllipsize() {
+            return ellipsize;
+        }
+        
+        public void setEllipsize(TruncateAt ellipsize) {
+            this.ellipsize = ellipsize;
         }
     }
 }
